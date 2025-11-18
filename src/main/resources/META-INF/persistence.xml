@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence" version="2.1">
+    <persistence-unit name="coworkingPU">
+        <provider>com.objectdb.jpa.Provider</provider>
+        <class>main.java.model.espacos.Espaco</class>
+        <class>main.java.model.espacos.SalaDeReuniao</class>
+        <class>main.java.model.espacos.CabineIndividual</class>
+        <class>main.java.model.espacos.Auditorio</class>
+        <class>main.java.model.reservas.Reserva</class>
+        <class>main.java.model.pagamentos.Pagamento</class>
+        <properties>
+            <property name="javax.persistence.jdbc.url" value="objectdb:coworking.odb"/>
+        </properties>
+    </persistence-unit>
+</persistence>
