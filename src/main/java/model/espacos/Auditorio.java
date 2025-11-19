@@ -6,6 +6,7 @@ import main.java.execoes.PrecoPorHoraInvalidoException;
 
 import javax.persistence.Entity;
 
+
 @Entity
 
 public class Auditorio extends Espaco {
