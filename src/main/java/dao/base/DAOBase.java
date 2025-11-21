@@ -10,45 +10,73 @@ public abstract class DAOBase<T> implements Persistencia<T> {
     protected static final EntityManagerFactory emf =
             Persistence.createEntityManagerFactory("coworkingPU");
 
-    protected EntityManager em = emf.createEntityManager();
-    private Class<T> clazz;
+    private final Class<T> clazz;
 
     public DAOBase(Class<T> clazz) {
         this.clazz = clazz;
     }
 
+    private EntityManager criarEntityManager() {
+        return emf.createEntityManager();
+    }
+
     @Override
     public void salvar(T obj) {
-        em.getTransaction().begin();
-        em.persist(obj);
-        em.getTransaction().commit();
+        EntityManager em = this.criarEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.persist(obj);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
     }
 
     @Override
     public T buscarPorId(int id) {
-        return em.find(clazz, id);
+        EntityManager em = this.criarEntityManager();
+        try {
+            return em.find(clazz, id);
+        } finally {
+            em.close();
+        }
     }
 
     @Override
     public List<T> carregarTodos() {
-        return em.createQuery("FROM " + clazz.getSimpleName(), clazz).getResultList();
+        EntityManager em = this.criarEntityManager();
+        try {
+            return em.createQuery("FROM " + clazz.getSimpleName(), clazz)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
     }
 
     @Override
     public void atualizar(T obj) {
-        em.getTransaction().begin();
-        em.merge(obj);
-        em.getTransaction().commit();
+        EntityManager em = this.criarEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.merge(obj);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
     }
 
     @Override
     public void remover(int id) {
-        T obj = buscarPorId(id);
-        if (obj != null) {
-            em.getTransaction().begin();
-            em.remove(obj);
-            em.getTransaction().commit();
+        EntityManager em = this.criarEntityManager();
+        try {
+            T obj = em.find(clazz, id);
+            if (obj != null) {
+                em.getTransaction().begin();
+                em.remove(obj);
+                em.getTransaction().commit();
+            }
+        } finally {
+            em.close();
         }
     }
 }
-

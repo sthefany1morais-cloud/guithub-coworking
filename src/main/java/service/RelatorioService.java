@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 
 public class RelatorioService {
 
-    private ReservaService reservaService;
-    private PagamentoService pagamentoService;
+    private final ReservaService reservaService;
+    private final PagamentoService pagamentoService;
 
     public RelatorioService(ReservaService reservaService, PagamentoService pagamentoService) {
         this.reservaService = reservaService;

@@ -10,7 +10,7 @@ import java.util.*;
 
 public class PagamentoService {
 
-    private PagamentoDAO pagamentoDAO;
+    private final PagamentoDAO pagamentoDAO;
 
     public PagamentoService(PagamentoDAO pagamentoDAO) {
         this.pagamentoDAO = pagamentoDAO;

@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 public class EspacoService {
 
-    private EspacoDAO espacoDAO;
+    private final EspacoDAO espacoDAO;
 
     public EspacoService(EspacoDAO espacoDAO) {
         this.espacoDAO = espacoDAO;
