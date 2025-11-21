@@ -18,6 +18,8 @@ public abstract class Espaco {
     private int capacidade;
     private boolean disponivel;
     private double precoPorHora;
+    private boolean ativo;
+    private boolean existente;
 
     protected Espaco() {
     }
@@ -34,6 +36,8 @@ public abstract class Espaco {
         this.capacidade = capacidade;
         this.disponivel = disponivel;
         this.precoPorHora = precoPorHora;
+        this.ativo = true;
+        this.existente = true;
     }
 
     public abstract double calcularCustoReserva(double horas);
@@ -84,5 +88,21 @@ public abstract class Espaco {
         }
 
         this.precoPorHora = precoPorHora;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    public boolean isExistente() {
+        return existente;
+    }
+
+    public void setExistente(boolean existente) {
+        this.existente = existente;
     }
 }

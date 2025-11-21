@@ -1,0 +1,101 @@
+package main.java.service;
+
+import main.java.dao.adaptacao.ReservaDAO;
+import main.java.execoes.*;
+import main.java.model.espacos.Espaco;
+import main.java.model.pagamentos.MetodoDePagamento;
+import main.java.model.reservas.Reserva;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class ReservaService {
+
+    private final ReservaDAO reservaDAO = new ReservaDAO();
+    private final EspacoService espacoService = new EspacoService();
+
+    public ReservaService() {
+    }
+
+    public Reserva criarReserva(int idEspaco,
+                                LocalDateTime inicio,
+                                LocalDateTime fim,
+                                MetodoDePagamento metodo,
+                                boolean projetor)
+            throws EspacoInexistenteException,
+            EspacoInativoException,
+            DataInvalidaExeption,
+            ReservaSobrepostaException {
+
+        Espaco espaco = espacoService.buscarPorId(idEspaco);
+
+        verificarDisponibilidade(idEspaco, inicio, fim);
+
+        Reserva reserva = new Reserva(espaco, inicio, fim, metodo, projetor);
+
+        reservaDAO.salvar(reserva);
+
+        return reserva;
+    }
+
+    public void verificarDisponibilidade(int idEspaco, LocalDateTime inicio, LocalDateTime fim) throws ReservaSobrepostaException {
+
+        List<Reserva> reservas = listarTodos().stream()
+                .filter(Reserva::isAtivo)
+                .filter(r -> r.getEspaco() != null && r.getEspaco().getId() == idEspaco)
+                .collect(Collectors.toList());
+
+        for (Reserva r : reservas) {
+
+            LocalDateTime rInicio = r.getInicio();
+            LocalDateTime rFim = r.getFim();
+
+            if (inicio.isBefore(rFim) && rInicio.isBefore(fim)) {
+                throw new ReservaSobrepostaException("Já existe uma reserva neste horário");
+            }
+        }
+    }
+
+    public void cancelarReserva(int idReserva)
+            throws ReservaInexistenteException, ReservaInativaException {
+
+        Reserva reserva = buscarPorId(idReserva);
+
+        LocalDateTime agora = LocalDateTime.now();
+        LocalDateTime inicio = reserva.getInicio();
+
+        double valorOriginal = reserva.getValorCalculado();
+        double valorReembolsado;
+
+        if (agora.isBefore(inicio.minusHours(24))) {
+            valorReembolsado = valorOriginal;
+        } else {
+            valorReembolsado = valorOriginal * 0.8;
+        }
+
+        reserva.setAtivo(false);
+        reserva.setValorCalculado(valorOriginal - valorReembolsado);
+
+        PagamentoService pagamentoService = new PagamentoService();
+        pagamentoService.cancelarPagamento(reserva);
+        reservaDAO.atualizar(reserva);
+    }
+
+    public Reserva buscarPorId(int id) throws ReservaInexistenteException, ReservaInativaException {
+        Reserva r = reservaDAO.buscarPorId(id);
+        if (r == null) {
+            throw new ReservaInexistenteException("Reserva inexistente.");
+        } else if (!r.isAtivo()) {
+            throw new ReservaInativaException("Reserva cancelada.");
+        }
+        return r;
+    }
+
+    public Reserva buscarPorIdTodos(int id) {
+        return reservaDAO.buscarPorId(id);
+    }
+
+    public List<Reserva> listarTodos(){
+        return reservaDAO.carregarTodos();
+    }
+}

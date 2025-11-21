@@ -30,6 +30,8 @@ public class Reserva {
 
     private boolean projetor;
 
+    private boolean ativo;
+
     protected Reserva() {
     }
 
@@ -41,7 +43,7 @@ public class Reserva {
         double horas = calcularHoras(inicio, fim);
         this.valorCalculado = calcularValor(horas);
         this.pagamento = new Pagamento(0, this.valorCalculado, LocalDateTime.now(),metodo);
-
+        this.ativo = true;
     }
 
     public Reserva(Espaco espaco, LocalDateTime inicio, LocalDateTime fim, MetodoDePagamento metodo, boolean projetor) throws DataInvalidaExeption{
@@ -52,6 +54,7 @@ public class Reserva {
         double horas = calcularHoras(inicio, fim);
         this.valorCalculado = calcularValor(horas);
         this.pagamento = new Pagamento(0, this.valorCalculado, LocalDateTime.now(),metodo);
+        this.ativo = true;
     }
 
     @PostPersist
@@ -73,7 +76,7 @@ public class Reserva {
 
     private double calcularValor(double horas){
         if (espaco instanceof SalaDeReuniao){
-           return ((SalaDeReuniao) espaco).calcularCustoReserva(horas, projetor);
+            return ((SalaDeReuniao) espaco).calcularCustoReserva(horas, projetor);
         }
         return this.espaco.calcularCustoReserva(horas);
     }
@@ -132,5 +135,13 @@ public class Reserva {
 
     public void setPagamento(Pagamento pagamento) {
         this.pagamento = pagamento;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
     }
 }
