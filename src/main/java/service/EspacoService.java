@@ -8,12 +8,16 @@ import java.util.stream.Collectors;
 
 public class EspacoService {
 
-    private final EspacoDAO espacoDAO = new EspacoDAO();
+    private EspacoDAO espacoDAO;
+
+    public EspacoService(EspacoDAO espacoDAO) {
+        this.espacoDAO = espacoDAO;
+    }
 
     private void validarNomeUnico(String nome) throws EspacoJaExistenteException {
         boolean existe = listarTodos().stream()
                 .anyMatch(e -> e.isExistente() &&
-                        e.isAtivo() &&
+                        e.isDisponivel() &&
                         e.getNome().equalsIgnoreCase(nome));
 
         if (existe) {
@@ -23,49 +27,47 @@ public class EspacoService {
         }
     }
 
-    public Espaco buscarPorId(int id) throws EspacoInexistenteException, EspacoInativoException{
+    public Espaco buscarPorId(int id) throws EspacoInexistenteException, EspacoIndisponivelException {
         Espaco espaco = espacoDAO.buscarPorId(id);
-        if (espaco == null || !espaco.isExistente()){
+        if (espaco == null){
             throw new EspacoInexistenteException("Espaço inexistente.");
-        } else if (espaco.isAtivo()) {
-            throw new EspacoInativoException("Espaço inativo");
+        } else if (!espaco.isDisponivel()) {
+            throw new EspacoIndisponivelException("Espaço indisponível");
         }
         return espaco;
     }
 
-    public SalaDeReuniao cadastrarSalaDeReuniao(int id, String nome, int capacidade,
-                                                boolean disponivel, double precoPorHora,
+    public SalaDeReuniao cadastrarSalaDeReuniao(String nome, int capacidade, double precoPorHora,
                                                 double taxaFixa)
             throws PrecoPorHoraInvalidoException, CapacidadeInvalidaException,
             TaxaFixaInvalidaException, EspacoJaExistenteException {
 
         validarNomeUnico(nome);
 
-        SalaDeReuniao sala = new SalaDeReuniao(id, nome, capacidade, disponivel, precoPorHora, taxaFixa);
+        SalaDeReuniao sala = new SalaDeReuniao(nome, capacidade, precoPorHora, taxaFixa);
         espacoDAO.salvar(sala);
         return sala;
     }
 
-    public CabineIndividual cadastrarCabineIndividual(int id, String nome, int capacidade,
-                                                      boolean disponivel, double precoPorHora)
+    public CabineIndividual cadastrarCabineIndividual(String nome, int capacidade, double precoPorHora)
             throws PrecoPorHoraInvalidoException, CapacidadeInvalidaException,
             EspacoJaExistenteException {
 
         validarNomeUnico(nome);
 
-        CabineIndividual cabine = new CabineIndividual(id, nome, capacidade, disponivel, precoPorHora);
+        CabineIndividual cabine = new CabineIndividual(nome, capacidade, precoPorHora);
         espacoDAO.salvar(cabine);
         return cabine;
     }
 
-    public Auditorio cadastrarAuditorio(int id, String nome, int capacidade, boolean disponivel,
+    public Auditorio cadastrarAuditorio(String nome, int capacidade,
                                         double precoPorHora, double custoAdicional)
             throws PrecoPorHoraInvalidoException, CapacidadeInvalidaException,
             CustoAdicionalInvalidoException, EspacoJaExistenteException {
 
         validarNomeUnico(nome);
 
-        Auditorio auditorio = new Auditorio(id, nome, capacidade, disponivel, precoPorHora, custoAdicional);
+        Auditorio auditorio = new Auditorio(nome, capacidade, precoPorHora, custoAdicional);
         espacoDAO.salvar(auditorio);
         return auditorio;
     }
@@ -92,14 +94,14 @@ public class EspacoService {
         espaco.setNome(novoNome);
         espaco.setCapacidade(novaCapacidade);
         espaco.setPrecoPorHora(novoPreco);
-        espaco.setAtivo(novoAtivo);
+        espaco.setDisponivel(novoAtivo);
     }
 
     public void atualizarSalaDeReuniao(int id, String novoNome, int novaCapacidade,
                                        double novoPreco, double novaTaxa, boolean novoAtivo)
             throws EspacoJaExistenteException, CapacidadeInvalidaException,
             PrecoPorHoraInvalidoException, EspacoInexistenteException, TaxaFixaInvalidaException,
-            EspacoInativoException {
+            EspacoIndisponivelException {
 
         SalaDeReuniao sala = (SalaDeReuniao) buscarPorId(id);
         atualizarEspaco(sala, novoNome, novaCapacidade, novoPreco, novoAtivo);
@@ -112,7 +114,7 @@ public class EspacoService {
     public void atualizarCabineIndividual(int id, String novoNome, int novaCapacidade,
                                           double novoPreco, boolean novoAtivo)
             throws EspacoJaExistenteException, CapacidadeInvalidaException,
-            PrecoPorHoraInvalidoException, EspacoInexistenteException, EspacoInativoException {
+            PrecoPorHoraInvalidoException, EspacoInexistenteException, EspacoIndisponivelException {
 
         CabineIndividual cabine = (CabineIndividual) buscarPorId(id);
 
@@ -125,7 +127,7 @@ public class EspacoService {
                                    double novoPreco, double novoCustoAdicional, boolean novoAtivo)
             throws EspacoJaExistenteException, CapacidadeInvalidaException,
             PrecoPorHoraInvalidoException, EspacoInexistenteException, CustoAdicionalInvalidoException,
-            EspacoInativoException {
+            EspacoIndisponivelException {
 
         Auditorio auditorio = (Auditorio) buscarPorId(id);
 
@@ -137,7 +139,7 @@ public class EspacoService {
     }
 
     public void removerEspaco(int id, boolean possuiReservasAtivas) throws EspacoComReservasAtivasException,
-            EspacoInexistenteException, EspacoInativoException {
+            EspacoInexistenteException, EspacoIndisponivelException {
 
         if (possuiReservasAtivas) {
             throw new EspacoComReservasAtivasException("Não é possível remover o espaço pois ele possui reservas ativas.");
@@ -145,7 +147,7 @@ public class EspacoService {
 
         Espaco espaco = buscarPorId(id);
 
-        espaco.setAtivo(false);
+        espaco.setDisponivel(false);
         espaco.setExistente(false);
 
         espacoDAO.atualizar(espaco);

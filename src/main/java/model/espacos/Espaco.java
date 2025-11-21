@@ -16,27 +16,24 @@ public abstract class Espaco {
 
     private String nome;
     private int capacidade;
-    private boolean disponivel;
     private double precoPorHora;
-    private boolean ativo;
+    private boolean disponivel;
     private boolean existente;
 
     protected Espaco() {
     }
 
-    public Espaco(int id, String nome, int capacidade, boolean disponivel, double precoPorHora) throws CapacidadeInvalidaException, PrecoPorHoraInvalidoException {
+    public Espaco(String nome, int capacidade, double precoPorHora) throws CapacidadeInvalidaException, PrecoPorHoraInvalidoException {
 
         if (capacidade <=0){
             throw  new CapacidadeInvalidaException("Capacidade não pode ser zero ou negativa.");
         } else if (precoPorHora <= 0) {
             throw  new PrecoPorHoraInvalidoException("Preço por hora não pode ser zero ou negativo.");
         }
-        this.id = id;
         this.nome = nome;
         this.capacidade = capacidade;
-        this.disponivel = disponivel;
         this.precoPorHora = precoPorHora;
-        this.ativo = true;
+        this.disponivel = true;
         this.existente = true;
     }
 
@@ -88,14 +85,6 @@ public abstract class Espaco {
         }
 
         this.precoPorHora = precoPorHora;
-    }
-
-    public boolean isAtivo() {
-        return ativo;
-    }
-
-    public void setAtivo(boolean ativo) {
-        this.ativo = ativo;
     }
 
     public boolean isExistente() {

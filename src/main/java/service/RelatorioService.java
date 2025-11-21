@@ -12,10 +12,13 @@ import java.util.stream.Collectors;
 
 public class RelatorioService {
 
-    private final ReservaService reservaService = new ReservaService();
-    private final PagamentoService pagamentoService = new PagamentoService();
+    private ReservaService reservaService;
+    private PagamentoService pagamentoService;
 
-    public RelatorioService() {}
+    public RelatorioService(ReservaService reservaService, PagamentoService pagamentoService) {
+        this.reservaService = reservaService;
+        this.pagamentoService = pagamentoService;
+    }
 
     /* ============================================================
                        MÉTODOS AUXILIARES PRIVADOS

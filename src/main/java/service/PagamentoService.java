@@ -10,9 +10,11 @@ import java.util.*;
 
 public class PagamentoService {
 
-    private final PagamentoDAO pagamentoDAO = new PagamentoDAO();
+    private PagamentoDAO pagamentoDAO;
 
-    public PagamentoService() {}
+    public PagamentoService(PagamentoDAO pagamentoDAO) {
+        this.pagamentoDAO = pagamentoDAO;
+    }
 
     public Pagamento buscarPorId(int id) throws PagamentoInexistenteException {
         Pagamento p = pagamentoDAO.buscarPorId(id);
@@ -30,10 +32,10 @@ public class PagamentoService {
         pagamentoDAO.atualizar(p);
     }
 
-    public void cancelarPagamento(Reserva reserva) {
+    protected void cancelarPagamento(Reserva reserva, double valor) {
 
         Pagamento pagamento = reserva.getPagamento();
-            pagamento.setValorPago(reserva.getValorCalculado());
+            pagamento.setValorPago(valor);
             pagamento.setData(LocalDateTime.now());
             pagamento.setIdDaReserva(reserva.getId());
             pagamentoDAO.atualizar(pagamento);

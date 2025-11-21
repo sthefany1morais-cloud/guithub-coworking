@@ -11,10 +11,14 @@ import java.util.stream.Collectors;
 
 public class ReservaService {
 
-    private final ReservaDAO reservaDAO = new ReservaDAO();
-    private final EspacoService espacoService = new EspacoService();
+    private ReservaDAO reservaDAO;
+    private EspacoService espacoService;
+    private PagamentoService pagamentoService;
 
-    public ReservaService() {
+    public ReservaService(ReservaDAO reservaDAO, EspacoService espacoService, PagamentoService pagamentoService) {
+        this.reservaDAO = reservaDAO;
+        this.espacoService = espacoService;
+        this.pagamentoService = pagamentoService;
     }
 
     public Reserva criarReserva(int idEspaco,
@@ -23,7 +27,7 @@ public class ReservaService {
                                 MetodoDePagamento metodo,
                                 boolean projetor)
             throws EspacoInexistenteException,
-            EspacoInativoException,
+            EspacoIndisponivelException,
             DataInvalidaExeption,
             ReservaSobrepostaException {
 
@@ -56,7 +60,13 @@ public class ReservaService {
         }
     }
 
-    public void cancelarReserva(int idReserva)
+    public boolean possuiReservasAtivas(Espaco espaco){
+        return this.listarTodos().stream()
+                .filter(r -> r.getEspaco() == espaco)
+                .anyMatch(Reserva::isAtivo);
+    }
+
+    public double cancelarReserva(int idReserva)
             throws ReservaInexistenteException, ReservaInativaException {
 
         Reserva reserva = buscarPorId(idReserva);
@@ -74,11 +84,10 @@ public class ReservaService {
         }
 
         reserva.setAtivo(false);
-        reserva.setValorCalculado(valorOriginal - valorReembolsado);
 
-        PagamentoService pagamentoService = new PagamentoService();
-        pagamentoService.cancelarPagamento(reserva);
+        this.pagamentoService.cancelarPagamento(reserva,(valorOriginal - valorReembolsado));
         reservaDAO.atualizar(reserva);
+        return valorReembolsado;
     }
 
     public Reserva buscarPorId(int id) throws ReservaInexistenteException, ReservaInativaException {
@@ -91,7 +100,7 @@ public class ReservaService {
         return r;
     }
 
-    public Reserva buscarPorIdTodos(int id) {
+    protected Reserva buscarPorIdTodos(int id) {
         return reservaDAO.buscarPorId(id);
     }
 

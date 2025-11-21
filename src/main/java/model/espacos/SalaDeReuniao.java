@@ -15,8 +15,8 @@ public class SalaDeReuniao extends Espaco {
     protected SalaDeReuniao() {
     }
 
-    public SalaDeReuniao(int id, String nome, int capacidade, boolean disponivel, double precoPorHora, double taxaFixa) throws CapacidadeInvalidaException, PrecoPorHoraInvalidoException, TaxaFixaInvalidaException {
-        super(id, nome, capacidade, disponivel, precoPorHora);
+    public SalaDeReuniao(String nome, int capacidade, double precoPorHora, double taxaFixa) throws CapacidadeInvalidaException, PrecoPorHoraInvalidoException, TaxaFixaInvalidaException {
+        super(nome, capacidade, precoPorHora);
         if (taxaFixa <= 0){
             throw  new TaxaFixaInvalidaException("Taxa fixa não pode ser zero ou negativa.");
         }

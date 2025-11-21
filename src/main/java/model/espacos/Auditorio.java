@@ -15,8 +15,8 @@ public class Auditorio extends Espaco {
     protected Auditorio() {
     }
 
-    public Auditorio(int id, String nome, int capacidade, boolean disponivel, double precoPorHora, double custoAdicional) throws CapacidadeInvalidaException, PrecoPorHoraInvalidoException, CustoAdicionalInvalidoException {
-        super(id, nome, capacidade, disponivel, precoPorHora);
+    public Auditorio(String nome, int capacidade, double precoPorHora, double custoAdicional) throws CapacidadeInvalidaException, PrecoPorHoraInvalidoException, CustoAdicionalInvalidoException {
+        super(nome, capacidade, precoPorHora);
         if (custoAdicional <=0){
             throw  new CustoAdicionalInvalidoException("Custo adicional não pode ser zero ou negativo.");
         }
