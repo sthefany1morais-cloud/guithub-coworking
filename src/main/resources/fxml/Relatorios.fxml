@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    <center>
+        <VBox alignment="CENTER" spacing="15.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label fx:id="tituloLabel" text="Relatórios" />
+                <HBox spacing="10.0">
+                    <children>
+                        <Label text="Tipo de Relatório:" />
+                        <ComboBox fx:id="tipoRelatorioComboBox" prefWidth="200.0" />
+                    </children>
+                </HBox>
+                <Label fx:id="descricaoLabel" text="Selecione um tipo de relatório para ver a descrição." wrapText="true" prefWidth="600.0" />
+                <!-- Campos dinâmicos -->
+                <HBox fx:id="periodoHBox" spacing="10.0" visible="false">
+                    <children>
+                        <Label text="Data Início:" />
+                        <DatePicker fx:id="dataInicioPicker" />
+                        <Label text="Data Fim:" />
+                        <DatePicker fx:id="dataFimPicker" />
+                    </children>
+                </HBox>
+                <HBox fx:id="statusHBox" spacing="10.0" visible="false">
+                    <children>
+                        <CheckBox fx:id="ativasCheckBox" text="Visualizar Ativas" />
+                        <CheckBox fx:id="inativasCheckBox" text="Visualizar Inativas" />
+                    </children>
+                </HBox>
+                <HBox fx:id="tipoEspacoHBox" spacing="10.0" visible="false">
+                    <children>
+                        <Label text="Tipo de Espaço:" />
+                        <ComboBox fx:id="tipoEspacoComboBox" prefWidth="150.0" />
+                    </children>
+                </HBox>
+                <HBox fx:id="metodoHBox" spacing="10.0" visible="false">
+                    <children>
+                        <Label text="Método Pagamento:" />
+                        <ComboBox fx:id="metodoComboBox" prefWidth="150.0" />
+                    </children>
+                </HBox>
+                <HBox fx:id="topHBox" spacing="10.0" visible="false">
+                    <children>
+                        <Label text="Top N:" />
+                        <Spinner fx:id="topSpinner" prefWidth="100.0" />
+                    </children>
+                </HBox>
+                <Button fx:id="gerarButton" mnemonicParsing="false" text="Gerar Relatório" />
+                <Button fx:id="voltarButton" mnemonicParsing="false" text="Voltar" />
+            </children>
+        </VBox>
+    </center>
+</BorderPane>

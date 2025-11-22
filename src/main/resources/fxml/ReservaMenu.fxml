@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    <center>
+        <VBox alignment="CENTER" spacing="20.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label fx:id="tituloLabel" text="Menu Reservas" />
+                <Button fx:id="criarReservaButton" mnemonicParsing="false" text="Criar Reserva" />
+                <Button fx:id="cancelarReservaButton" mnemonicParsing="false" text="Cancelar Reserva" />
+                <Button fx:id="voltarButton" mnemonicParsing="false" text="Voltar" />
+            </children>
+        </VBox>
+    </center>
+</BorderPane>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    <center>
+        <VBox alignment="CENTER" spacing="15.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label fx:id="tituloLabel" text="Cancelar Reserva" />
+                <HBox spacing="10.0">
+                    <children>
+                        <Label text="Filtro Tipo Espaço:" />
+                        <ComboBox fx:id="filtroTipoComboBox" prefWidth="150.0" />
+                        <TextField fx:id="buscaField" promptText="Buscar por ID ou Nome" prefWidth="150.0" />
+                    </children>
+                </HBox>
+                <TableView fx:id="reservasTableView" prefHeight="200.0" prefWidth="500.0">
+                    <columns>
+                        <TableColumn fx:id="idColumn" text="ID" prefWidth="50.0" />
+                        <TableColumn fx:id="espacoColumn" text="Espaço" prefWidth="150.0" />
+                        <TableColumn fx:id="inicioColumn" text="Início" prefWidth="120.0" />
+                        <TableColumn fx:id="fimColumn" text="Fim" prefWidth="120.0" />
+                        <TableColumn fx:id="valorColumn" text="Valor" prefWidth="80.0" />
+                    </columns>
+                </TableView>
+                <Button fx:id="cancelarButton" mnemonicParsing="false" text="Cancelar Selecionada" disable="true" />
+                <Button fx:id="voltarButton" mnemonicParsing="false" text="Voltar" />
+            </children>
+        </VBox>
+    </center>
+</BorderPane>

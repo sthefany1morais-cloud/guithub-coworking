@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    <center>
+        <VBox alignment="CENTER" spacing="15.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label fx:id="tituloLabel" text="Detalhes da Reserva" />
+                <HBox spacing="10.0">
+                    <children>
+                        <Label fx:id="espacoInfoLabel" text="Espaço: [Nome] - Tipo: [Tipo] - Capacidade: [Cap] - Preço: R$[Preço]" />
+                    </children>
+                </HBox>
+                <GridPane hgap="10.0" vgap="10.0">
+                    <children>
+                        <Label text="Data Início:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <DatePicker fx:id="dataInicioPicker" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <Label text="Hora Início:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                        <TextField fx:id="horaInicioField" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label text="Data Fim:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                        <DatePicker fx:id="dataFimPicker" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label text="Hora Fim:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                        <TextField fx:id="horaFimField" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label fx:id="projetorLabel" text="Projetor:" GridPane.columnIndex="0" GridPane.rowIndex="4" visible="false" />
+                        <CheckBox fx:id="projetorCheckBox" GridPane.columnIndex="1" GridPane.rowIndex="4" visible="false" />
+                        <Label text="Método Pagamento:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                        <ComboBox fx:id="metodoComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                    </children>
+                </GridPane>
+                <Label fx:id="custoLabel" text="Custo: R$0,00" />
+                <Button fx:id="salvarButton" mnemonicParsing="false" text="Salvar Reserva" />
+                <Button fx:id="voltarButton" mnemonicParsing="false" text="Voltar" />
+            </children>
+        </VBox>
+    </center>
+</BorderPane>

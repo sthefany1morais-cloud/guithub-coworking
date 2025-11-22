@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    <center>
+        <VBox alignment="CENTER" spacing="15.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label fx:id="tituloPopupLabel" text="Relatório Gerado" />
+                <TableView fx:id="relatorioPopupTableView" prefHeight="200.0" prefWidth="500.0">
+                    <columns>
+                        <TableColumn fx:id="coluna1" text="Coluna 1" prefWidth="125.0" />
+                        <TableColumn fx:id="coluna2" text="Coluna 2" prefWidth="125.0" />
+                        <TableColumn fx:id="coluna3" text="Coluna 3" prefWidth="125.0" />
+                        <TableColumn fx:id="coluna4" text="Coluna 4" prefWidth="125.0" />
+                    </columns>
+                </TableView>
+                <Label fx:id="resumoPopupLabel" text="" wrapText="true" prefWidth="500.0" />
+                <Button fx:id="fecharButton" mnemonicParsing="false" text="Fechar" />
+            </children>
+        </VBox>
+    </center>
+</BorderPane>
