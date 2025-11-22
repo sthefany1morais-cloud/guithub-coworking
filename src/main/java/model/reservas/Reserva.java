@@ -35,17 +35,6 @@ public class Reserva {
     protected Reserva() {
     }
 
-    public Reserva(Espaco espaco, LocalDateTime inicio, LocalDateTime fim, MetodoDePagamento metodo) throws DataInvalidaExeption {
-        this.espaco = espaco;
-        this.inicio = inicio;
-        this.fim = fim;
-        this.projetor = false;
-        double horas = calcularHoras(inicio, fim);
-        this.valorCalculado = calcularValor(horas);
-        this.pagamento = new Pagamento(0, this.valorCalculado, LocalDateTime.now(),metodo);
-        this.ativo = true;
-    }
-
     public Reserva(Espaco espaco, LocalDateTime inicio, LocalDateTime fim, MetodoDePagamento metodo, boolean projetor) throws DataInvalidaExeption{
         this.espaco = espaco;
         this.inicio = inicio;
