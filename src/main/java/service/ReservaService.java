@@ -42,11 +42,11 @@ public class ReservaService {
         return reserva;
     }
 
-    public void verificarDisponibilidade(int idEspaco, LocalDateTime inicio, LocalDateTime fim) throws ReservaSobrepostaException {
+    public void verificarDisponibilidade(int IdEspaco, LocalDateTime inicio, LocalDateTime fim) throws ReservaSobrepostaException {
 
         List<Reserva> reservas = listarTodos().stream()
                 .filter(Reserva::isAtivo)
-                .filter(r -> r.getEspaco() != null && r.getEspaco().getId() == idEspaco)
+                .filter(r -> r.getEspaco().getId() == IdEspaco)
                 .collect(Collectors.toList());
 
         for (Reserva r : reservas) {
