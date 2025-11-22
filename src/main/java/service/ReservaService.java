@@ -6,6 +6,7 @@ import main.java.model.espacos.Espaco;
 import main.java.model.pagamentos.MetodoDePagamento;
 import main.java.model.reservas.Reserva;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,12 +51,18 @@ public class ReservaService {
                 .collect(Collectors.toList());
 
         for (Reserva r : reservas) {
-
             LocalDateTime rInicio = r.getInicio();
             LocalDateTime rFim = r.getFim();
 
             if (inicio.isBefore(rFim) && rInicio.isBefore(fim)) {
-                throw new ReservaSobrepostaException("Já existe uma reserva neste horário");
+                DateTimeFormatter formatar = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+                String mensagem = String.format(
+                        "Já existe uma reserva no espaço '%s' no horário de %s às %s.",
+                        r.getEspaco().getNome(),
+                        rInicio.format(formatar),
+                        rFim.format(formatar));
+                throw new ReservaSobrepostaException(mensagem);
             }
         }
     }
