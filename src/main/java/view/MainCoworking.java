@@ -79,9 +79,10 @@ public class MainCoworking extends Application {
                 ((RelatorioPopupController) controller).setRelatorioService(relatorioService);
             }
 
-            Scene scene = new Scene(root, 600, 400);
+            Scene scene = new Scene(root, 800, 600);  // Aumentado de 600x400 para 800x600
             primaryStage.setScene(scene);
             primaryStage.setTitle("Sistema Coworking");
+            primaryStage.setResizable(true);  // Permite redimensionar
             primaryStage.show();
         } catch (Exception e) {
             e.printStackTrace();
