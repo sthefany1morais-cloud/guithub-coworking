@@ -5,14 +5,15 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.view.controller.MenuEspacosController">
     <center>
         <VBox alignment="CENTER" spacing="20.0" BorderPane.alignment="CENTER">
             <children>
                 <Label fx:id="tituloLabel" text="Menu Espaços" />
-                <Button fx:id="criarEspacoButton" mnemonicParsing="false" text="Criar Espaço" />
-                <Button fx:id="editarEspacosButton" mnemonicParsing="false" text="Editar Espaços" />
-                <Button fx:id="voltarButton" mnemonicParsing="false" text="Voltar" />
+                <Button fx:id="criarEspacoButton" mnemonicParsing="false" text="Criar Espaço" onAction="#criarEspaco" />
+                <Button fx:id="editarEspacosButton" mnemonicParsing="false" text="Editar Espaços" onAction="#editarEspacos" />
+                <Button fx:id="voltarButton" mnemonicParsing="false" text="Voltar" onAction="#voltar" />
             </children>
         </VBox>
     </center>

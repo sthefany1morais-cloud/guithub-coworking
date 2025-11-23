@@ -10,7 +10,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.view.controller.EditarEspacosController">
     <center>
         <VBox alignment="CENTER" spacing="15.0" BorderPane.alignment="CENTER">
             <children>
@@ -32,9 +33,9 @@
                         <TableColumn fx:id="disponivelColumn" text="Disponível" prefWidth="80.0" />
                     </columns>
                 </TableView>
-                <Button fx:id="editarButton" mnemonicParsing="false" text="Editar Selecionado" />
-                <Button fx:id="excluirButton" mnemonicParsing="false" text="Excluir Selecionado" />
-                <Button fx:id="voltarButton" mnemonicParsing="false" text="Voltar" />
+                <Button fx:id="editarButton" mnemonicParsing="false" text="Editar Selecionado" onAction="#editar" />
+                <Button fx:id="excluirButton" mnemonicParsing="false" text="Excluir Selecionado" onAction="#excluir" />
+                <Button fx:id="voltarButton" mnemonicParsing="false" text="Voltar" onAction="#voltar" />
             </children>
         </VBox>
     </center>

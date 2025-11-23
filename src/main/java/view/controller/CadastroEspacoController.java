@@ -35,7 +35,7 @@ public class CadastroEspacoController {
         tipoComboBox.setItems(FXCollections.observableArrayList("Sala de Reunião", "Cabine Individual", "Auditório"));
         tipoComboBox.setOnAction(e -> atualizarCamposEspecificos());
     }
-
+    @FXML
     private void atualizarCamposEspecificos() {
         String tipo = tipoComboBox.getValue();
         if ("Sala de Reunião".equals(tipo)) {

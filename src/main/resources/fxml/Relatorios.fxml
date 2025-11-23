@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.view.controller.RelatoriosController">
     <center>
         <VBox alignment="CENTER" spacing="15.0" BorderPane.alignment="CENTER">
             <children>
@@ -55,8 +55,8 @@
                         <Spinner fx:id="topSpinner" prefWidth="100.0" />
                     </children>
                 </HBox>
-                <Button fx:id="gerarButton" mnemonicParsing="false" text="Gerar Relatório" />
-                <Button fx:id="voltarButton" mnemonicParsing="false" text="Voltar" />
+                <Button fx:id="gerarButton" mnemonicParsing="false" text="Gerar Relatório" onAction="#gerar" />
+                <Button fx:id="voltarButton" mnemonicParsing="false" text="Voltar" onAction="#voltar" />
             </children>
         </VBox>
     </center>

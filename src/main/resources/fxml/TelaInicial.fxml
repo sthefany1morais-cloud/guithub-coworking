@@ -6,13 +6,12 @@
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.view.controller.TelaInicialController">
-
     <center>
         <VBox alignment="CENTER" spacing="20.0" BorderPane.alignment="CENTER">
             <children>
                 <Label fx:id="tituloLabel" text="Bem-vindo ao Sistema de Coworking" />
-                <Button fx:id="iniciarButton" mnemonicParsing="false" text="Iniciar Sistema" />
-                <Button fx:id="sairButton" mnemonicParsing="false" text="Sair" />
+                <Button fx:id="iniciarButton" mnemonicParsing="false" text="Iniciar Sistema" onAction="#iniciarSistema" />
+                <Button fx:id="sairButton" mnemonicParsing="false" text="Sair" onAction="#sair" />
             </children>
         </VBox>
     </center>

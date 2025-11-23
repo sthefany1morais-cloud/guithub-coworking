@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.view.controller.CancelarReservaController">
     <center>
         <VBox alignment="CENTER" spacing="15.0" BorderPane.alignment="CENTER">
             <children>
@@ -31,8 +31,8 @@
                         <TableColumn fx:id="valorColumn" text="Valor" prefWidth="80.0" />
                     </columns>
                 </TableView>
-                <Button fx:id="cancelarButton" mnemonicParsing="false" text="Cancelar Selecionada" disable="true" />
-                <Button fx:id="voltarButton" mnemonicParsing="false" text="Voltar" />
+                <Button fx:id="cancelarButton" mnemonicParsing="false" text="Cancelar Selecionada" disable="true" onAction="#cancelar" />
+                <Button fx:id="voltarButton" mnemonicParsing="false" text="Voltar" onAction="#voltar" />
             </children>
         </VBox>
     </center>

@@ -7,7 +7,8 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.view.controller.RelatorioPopupController">
     <center>
         <VBox alignment="CENTER" spacing="15.0" BorderPane.alignment="CENTER">
             <children>
@@ -21,7 +22,7 @@
                     </columns>
                 </TableView>
                 <Label fx:id="resumoPopupLabel" text="" wrapText="true" prefWidth="500.0" />
-                <Button fx:id="fecharButton" mnemonicParsing="false" text="Fechar" />
+                <Button fx:id="fecharButton" mnemonicParsing="false" text="Fechar" onAction="#fechar" />
             </children>
         </VBox>
     </center>

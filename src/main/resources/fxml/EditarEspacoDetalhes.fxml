@@ -8,7 +8,8 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.view.controller.EditarEspacoDetalhesController">
     <center>
         <VBox alignment="CENTER" spacing="15.0" BorderPane.alignment="CENTER">
             <children>
@@ -27,8 +28,8 @@
                         <CheckBox fx:id="disponivelCheckBox" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                     </children>
                 </GridPane>
-                <Button fx:id="salvarButton" mnemonicParsing="false" text="Salvar" />
-                <Button fx:id="voltarButton" mnemonicParsing="false" text="Voltar" />
+                <Button fx:id="salvarButton" mnemonicParsing="false" text="Salvar" onAction="#salvar" />
+                <Button fx:id="voltarButton" mnemonicParsing="false" text="Voltar" onAction="#voltar" />
             </children>
         </VBox>
     </center>
