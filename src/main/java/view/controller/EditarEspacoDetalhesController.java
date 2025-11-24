@@ -1,10 +1,8 @@
 package main.java.view.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import main.java.execoes.*;
 import main.java.model.espacos.Auditorio;
 import main.java.model.espacos.Espaco;
 import main.java.model.espacos.SalaDeReuniao;
@@ -19,6 +17,7 @@ public class EditarEspacoDetalhesController {
     @FXML private CheckBox disponivelCheckBox;
     @FXML private Button salvarButton;
     @FXML private Button voltarButton;
+    @FXML private Label errosLabel;
 
     private static Espaco espacoSelecionado;
     private MainCoworking mainApp;
@@ -63,10 +62,12 @@ public class EditarEspacoDetalhesController {
     private void salvar() {
         try {
             // Valores: use original se vazio
-            String nome = nomeField.getText().isEmpty() ? espacoSelecionado.getNome() : nomeField.getText();
-            int capacidade = capacidadeField.getText().isEmpty() ? espacoSelecionado.getCapacidade() : Integer.parseInt(capacidadeField.getText());
-            double preco = precoField.getText().isEmpty() ? espacoSelecionado.getPrecoPorHora() : Double.parseDouble(precoField.getText());
+            String nome = nomeField.getText().trim().isEmpty() ? espacoSelecionado.getNome() : nomeField.getText().trim();
+            String capText = capacidadeField.getText().trim().isEmpty() ? String.valueOf(espacoSelecionado.getCapacidade()) : capacidadeField.getText().trim();
+            String precoText = precoField.getText().trim().isEmpty() ? String.valueOf(espacoSelecionado.getPrecoPorHora()) : precoField.getText().trim();
             boolean disponivel = disponivelCheckBox.isSelected();
+            int capacidade = Integer.parseInt(capText);
+            double preco = Double.parseDouble(precoText);
 
             if (espacoSelecionado instanceof SalaDeReuniao) {
                 double taxa = campoEspecificoField.getText().isEmpty() ? ((SalaDeReuniao) espacoSelecionado).getTaxaFixa() : Double.parseDouble(campoEspecificoField.getText());
@@ -78,12 +79,15 @@ public class EditarEspacoDetalhesController {
                 espacoService.atualizarCabineIndividual(espacoSelecionado.getId(), nome, capacidade, preco, disponivel);
             }
 
+            errosLabel.setText("");
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Espaço atualizado com sucesso!");
             alert.showAndWait();
             voltar();
+        } catch (CapacidadeInvalidaException | PrecoPorHoraInvalidoException | EspacoJaExistenteException |
+                 TaxaFixaInvalidaException | CustoAdicionalInvalidoException e) {
+            errosLabel.setText("Erro: " + e.getMessage());
         } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Erro: " + e.getMessage());
-            alert.showAndWait();
+            errosLabel.setText("Erro inesperado: " + e.getMessage());
         }
     }
 

@@ -2,6 +2,7 @@ package main.java.view.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import main.java.service.EspacoService;
 import main.java.service.RelatorioService;
 import main.java.service.ReservaService;
@@ -12,6 +13,7 @@ public class MenuInicialController {
     @FXML private Button gerenciarReservasButton;
     @FXML private Button relatoriosButton;
     @FXML private Button voltarButton;
+    @FXML private Label mensagemLabel;
 
     private MainCoworking mainApp;
     private EspacoService espacoService;
@@ -26,6 +28,17 @@ public class MenuInicialController {
         this.espacoService = espacoService;
         this.reservaService = reservaService;
         this.relatorioService = relatorioService;
+        verificarDados();  // Verificar se há dados ao carregar
+    }
+
+    private void verificarDados() {
+        if (espacoService.listarTodos().isEmpty()) {
+            mensagemLabel.setText("Nenhum espaço cadastrado. Comece criando espaços.");
+        } else if (reservaService.listarTodos().isEmpty()) {
+            mensagemLabel.setText("Nenhuma reserva encontrada. Crie reservas.");
+        } else {
+            mensagemLabel.setText("");
+        }
     }
 
     @FXML

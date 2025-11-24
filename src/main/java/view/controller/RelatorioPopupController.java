@@ -19,6 +19,7 @@ public class RelatorioPopupController {
     @FXML private TableColumn<ObservableList<String>, String> coluna4;
     @FXML private Label resumoPopupLabel;
     @FXML private Button fecharButton;
+    @FXML private Label mensagemLabel;
 
     private RelatorioService relatorioService;
 
@@ -27,11 +28,17 @@ public class RelatorioPopupController {
     }
 
     public void setDados(ObservableList<ObservableList<String>> dados, String resumo) {
-        coluna1.setCellValueFactory(new PropertyValueFactory<>("0"));
-        coluna2.setCellValueFactory(new PropertyValueFactory<>("1"));
-        coluna3.setCellValueFactory(new PropertyValueFactory<>("2"));
-        coluna4.setCellValueFactory(new PropertyValueFactory<>("3"));
-        relatorioPopupTableView.setItems(dados);
+        if (dados.isEmpty()) {
+            mensagemLabel.setText("Nenhum dado encontrado para o relatório.");
+            relatorioPopupTableView.setItems(FXCollections.emptyObservableList());
+        } else {
+            coluna1.setCellValueFactory(new PropertyValueFactory<>("0"));
+            coluna2.setCellValueFactory(new PropertyValueFactory<>("1"));
+            coluna3.setCellValueFactory(new PropertyValueFactory<>("2"));
+            coluna4.setCellValueFactory(new PropertyValueFactory<>("3"));
+            relatorioPopupTableView.setItems(dados);
+            mensagemLabel.setText("");
+        }
         resumoPopupLabel.setText(resumo);
     }
 

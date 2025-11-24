@@ -30,6 +30,7 @@ public class CriarReservaController {
     @FXML private Label detalhesLabel;
     @FXML private Button criarReservaButton;
     @FXML private Button voltarButton;
+    @FXML private Label mensagemLabel;
 
     private MainCoworking mainApp;
     private EspacoService espacoService;
@@ -68,6 +69,15 @@ public class CriarReservaController {
         espacosList = FXCollections.observableArrayList(espacoService.listarTodos());
         filteredList = new FilteredList<>(espacosList, p -> true);
         espacosTableView.setItems(filteredList);
+        if (espacosList.isEmpty()) {
+            detalhesLabel.setText("Nenhum espaço disponível. Crie um espaço primeiro.");
+            criarReservaButton.setDisable(true);
+            mensagemLabel.setText("Nenhum espaço encontrado. Crie um novo espaço primeiro.");
+        } else {
+            detalhesLabel.setText("Selecione um espaço para ver detalhes.");
+            criarReservaButton.setDisable(true);
+            mensagemLabel.setText("");
+        }
     }
 
     private void filtrar() {

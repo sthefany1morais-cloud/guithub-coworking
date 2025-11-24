@@ -4,13 +4,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import main.java.execoes.ReservaInativaException;
+import main.java.execoes.ReservaInexistenteException;
 import main.java.model.reservas.Reserva;
 import main.java.service.ReservaService;
 import main.java.view.MainCoworking;
@@ -26,6 +23,7 @@ public class CancelarReservaController {
     @FXML private TableColumn<Reserva, Double> valorColumn;
     @FXML private Button cancelarButton;
     @FXML private Button voltarButton;
+    @FXML private Label mensagemLabel;
 
     private MainCoworking mainApp;
     private ReservaService reservaService;
@@ -55,12 +53,18 @@ public class CancelarReservaController {
         buscaField.textProperty().addListener((obs, oldText, newText) -> filtrar());
         filtroTipoComboBox.setOnAction(e -> filtrar());
         reservasTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> cancelarButton.setDisable(newSelection == null));
+        carregarReservas();
     }
 
     private void carregarReservas() {
         reservasList = FXCollections.observableArrayList(reservaService.listarTodos().stream().filter(Reserva::isAtivo).toList());
         filteredList = new FilteredList<>(reservasList, p -> true);
         reservasTableView.setItems(filteredList);
+        if (reservasList.isEmpty()) {
+            mensagemLabel.setText("Nenhuma reserva ativa encontrada.");
+        } else {
+            mensagemLabel.setText("");
+        }
     }
 
     private void filtrar() {
@@ -80,12 +84,14 @@ public class CancelarReservaController {
         if (selecionada != null) {
             try {
                 double reembolso = reservaService.cancelarReserva(selecionada.getId());
+                mensagemLabel.setText("");
                 Alert alert = new Alert(Alert.AlertType.INFORMATION, "Reserva cancelada! Reembolso: R$" + String.format("%.2f", reembolso));
                 alert.showAndWait();
                 carregarReservas();
+            } catch (ReservaInexistenteException | ReservaInativaException e) {
+                mensagemLabel.setText("Erro: " + e.getMessage());
             } catch (Exception e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Erro: " + e.getMessage());
-                alert.showAndWait();
+                mensagemLabel.setText("Erro inesperado: " + e.getMessage());
             }
         }
     }

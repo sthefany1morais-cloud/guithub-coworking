@@ -4,6 +4,8 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import main.java.dao.adaptacao.EspacoDAO;
 import main.java.dao.adaptacao.PagamentoDAO;
@@ -13,6 +15,9 @@ import main.java.service.PagamentoService;
 import main.java.service.RelatorioService;
 import main.java.service.ReservaService;
 import main.java.view.controller.*;
+import main.java.service.SistemaService;
+
+import java.util.Optional;
 
 public class MainCoworking extends Application {
     private Stage primaryStage;
@@ -22,14 +27,14 @@ public class MainCoworking extends Application {
     private PagamentoService pagamentoService = new PagamentoService(new PagamentoDAO());
     private ReservaService reservaService = new ReservaService(new ReservaDAO(), espacoService, pagamentoService);
     private RelatorioService relatorioService = new RelatorioService(reservaService, pagamentoService);
+    private SistemaService sistemaService = new SistemaService();  // Novo service para persistência
 
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         primaryStage.setOnCloseRequest(e -> {
-            // Confirmação simples para fechar (expanda nos controllers se necessário)
             if (!confirmarSaida()) {
-                e.consume(); // Cancela fechamento
+                e.consume();  // Cancela fechamento se não confirmar
             }
         });
         mudarScene("TelaInicial.fxml");
@@ -91,8 +96,22 @@ public class MainCoworking extends Application {
     }
 
     private boolean confirmarSaida() {
-        // Simples confirmação (expanda nos controllers se necessário)
-        return true; // Permite sair; use Alert para confirmação real
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Deseja salvar os dados antes de sair?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+        alert.setTitle("Confirmação de Saída");
+        alert.setHeaderText("Sair do Sistema");
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent()) {
+            if (result.get() == ButtonType.YES) {
+                // Persistir dados: chama service para sincronizar com ObjectDB
+                sistemaService.persistirDados();  // Respeita MVC
+                return true;  // Sai após salvar
+            } else if (result.get() == ButtonType.NO) {
+                return true;  // Sai sem salvar
+            } else {
+                return false;  // Cancela saída
+            }
+        }
+        return false;  // Cancela por padrão
     }
 
     public static void main(String[] args) {

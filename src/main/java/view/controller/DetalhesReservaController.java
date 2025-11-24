@@ -9,6 +9,10 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import main.java.execoes.DataInvalidaExeption;
+import main.java.execoes.EspacoIndisponivelException;
+import main.java.execoes.EspacoInexistenteException;
+import main.java.execoes.ReservaSobrepostaException;
 import main.java.model.espacos.Espaco;
 import main.java.model.espacos.SalaDeReuniao;
 import main.java.model.pagamentos.MetodoDePagamento;
@@ -30,6 +34,7 @@ public class DetalhesReservaController {
     @FXML private Label custoLabel;
     @FXML private Button salvarButton;
     @FXML private Button voltarButton;
+    @FXML private Label errosLabel;
 
     private static Espaco espacoSelecionado;
     private MainCoworking mainApp;
@@ -91,12 +96,15 @@ public class DetalhesReservaController {
             boolean projetor = projetorCheckBox.isSelected();
 
             reservaService.criarReserva(espacoSelecionado.getId(), inicio, fim, metodo, projetor);
+            errosLabel.setText("");
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Reserva criada com sucesso!");
             alert.showAndWait();
             voltar();
+        } catch (EspacoInexistenteException | EspacoIndisponivelException | DataInvalidaExeption |
+                 ReservaSobrepostaException e) {
+            errosLabel.setText("Erro: " + e.getMessage());
         } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Erro: " + e.getMessage());
-            alert.showAndWait();
+            errosLabel.setText("Erro inesperado: " + e.getMessage());
         }
     }
 

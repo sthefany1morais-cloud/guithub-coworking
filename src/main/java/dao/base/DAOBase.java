@@ -16,6 +16,10 @@ public abstract class DAOBase<T> implements Persistencia<T> {
         this.clazz = clazz;
     }
 
+    public static void persistirDadosGlobais() {
+        emf.getCache().evictAll();  // Limpa cache e força sincronização com ObjectDB
+    }
+
     private EntityManager criarEntityManager() {
         return emf.createEntityManager();
     }
@@ -46,7 +50,8 @@ public abstract class DAOBase<T> implements Persistencia<T> {
     public List<T> carregarTodos() {
         EntityManager em = this.criarEntityManager();
         try {
-            return em.createQuery("FROM " + clazz.getSimpleName(), clazz)
+            // Corrigido: adicionar "SELECT e" para compatibilidade com ObjectDB
+            return em.createQuery("SELECT e FROM " + clazz.getSimpleName() + " e", clazz)
                     .getResultList();
         } finally {
             em.close();
