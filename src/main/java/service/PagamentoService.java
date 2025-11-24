@@ -38,7 +38,7 @@ public class PagamentoService {
             pagamento.setValorPago(valor);
             pagamento.setData(LocalDateTime.now());
             pagamento.setIdDaReserva(reserva.getId());
-            pagamentoDAO.atualizar(pagamento);
+            this.atualizar(pagamento);
     }
 }
 
