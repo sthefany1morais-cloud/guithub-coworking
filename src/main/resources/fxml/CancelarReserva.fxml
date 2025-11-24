@@ -31,6 +31,7 @@
                         <TableColumn fx:id="valorColumn" text="Valor" prefWidth="80.0" />
                     </columns>
                 </TableView>
+                <Label fx:id="mensagemLabel" text="" wrapText="true" prefWidth="500.0" />  <!-- Adicionado para mensagens vazias/erros -->
                 <Button fx:id="cancelarButton" mnemonicParsing="false" text="Cancelar Selecionada" disable="true" onAction="#cancelar" />
                 <Button fx:id="voltarButton" mnemonicParsing="false" text="Voltar" onAction="#voltar" />
             </children>

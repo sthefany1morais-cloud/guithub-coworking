@@ -30,6 +30,7 @@
                 <Button fx:id="salvarButton" mnemonicParsing="false" text="Salvar" onAction="#salvar" />
                 <Button fx:id="limparButton" mnemonicParsing="false" text="Limpar" onAction="#limpar" />
                 <Button fx:id="voltarButton" mnemonicParsing="false" text="Voltar" onAction="#voltar" />
+                <Label fx:id="errosLabel" text="" wrapText="true" prefWidth="400.0" />  <!-- Adicionado para mostrar erros -->
             </children>
         </VBox>
     </center>

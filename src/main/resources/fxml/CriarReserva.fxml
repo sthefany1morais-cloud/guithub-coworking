@@ -11,7 +11,6 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
 <BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.view.controller.CriarReservaController">
     <center>
         <VBox alignment="CENTER" spacing="15.0" BorderPane.alignment="CENTER">
@@ -39,6 +38,7 @@
                         <Label fx:id="detalhesLabel" text="Selecione um espaço para ver detalhes." />
                     </children>
                 </HBox>
+                <Label fx:id="mensagemLabel" text="" wrapText="true" prefWidth="500.0" />  <!-- Adicionado para mensagens vazias -->
                 <Button fx:id="criarReservaButton" mnemonicParsing="false" text="Criar Reserva para Selecionado" disable="true" onAction="#criarReserva" />
                 <Button fx:id="voltarButton" mnemonicParsing="false" text="Voltar" onAction="#voltar" />
             </children>

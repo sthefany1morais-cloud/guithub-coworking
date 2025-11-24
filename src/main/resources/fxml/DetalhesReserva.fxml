@@ -10,6 +10,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Button?>
+
 <BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.view.controller.DetalhesReservaController">
     <center>
         <VBox alignment="CENTER" spacing="15.0" BorderPane.alignment="CENTER">
@@ -37,6 +38,7 @@
                     </children>
                 </GridPane>
                 <Label fx:id="custoLabel" text="Custo: R$0,00" />
+                <Label fx:id="errosLabel" text="" wrapText="true" prefWidth="400.0" />  <!-- Adicionado para erros -->
                 <Button fx:id="salvarButton" mnemonicParsing="false" text="Salvar Reserva" onAction="#salvar" />
                 <Button fx:id="voltarButton" mnemonicParsing="false" text="Voltar" onAction="#voltar" />
             </children>

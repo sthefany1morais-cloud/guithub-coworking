@@ -14,6 +14,7 @@
                 <Button fx:id="gerenciarReservasButton" mnemonicParsing="false" text="Gerenciar Reservas" onAction="#gerenciarReservas" />
                 <Button fx:id="relatoriosButton" mnemonicParsing="false" text="Relatórios" onAction="#relatorios" />
                 <Button fx:id="voltarButton" mnemonicParsing="false" text="Voltar" onAction="#voltar" />
+                <Label fx:id="mensagemLabel" text="" wrapText="true" prefWidth="400.0" />  <!-- Adicionado para mensagens vazias -->
             </children>
         </VBox>
     </center>

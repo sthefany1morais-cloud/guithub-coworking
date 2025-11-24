@@ -13,6 +13,7 @@
                 <Button fx:id="criarReservaButton" mnemonicParsing="false" text="Criar Reserva" onAction="#criarReserva" />
                 <Button fx:id="cancelarReservaButton" mnemonicParsing="false" text="Cancelar Reserva" onAction="#cancelarReserva" />
                 <Button fx:id="voltarButton" mnemonicParsing="false" text="Voltar" onAction="#voltar" />
+                <Label fx:id="mensagemLabel" text="" wrapText="true" prefWidth="400.0" />  <!-- Adicionado para mensagens vazias -->
             </children>
         </VBox>
     </center>

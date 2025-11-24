@@ -57,6 +57,7 @@
                 </HBox>
                 <Button fx:id="gerarButton" mnemonicParsing="false" text="Gerar Relatório" onAction="#gerar" />
                 <Button fx:id="voltarButton" mnemonicParsing="false" text="Voltar" onAction="#voltar" />
+                <Label fx:id="errosLabel" text="" wrapText="true" prefWidth="600.0" />  <!-- Adicionado para erros -->
             </children>
         </VBox>
     </center>
