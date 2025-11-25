@@ -51,9 +51,8 @@ public class CancelarReservaController {
         valorColumn.setCellValueFactory(new PropertyValueFactory<>("valorCalculado"));
 
         buscaField.textProperty().addListener((obs, oldText, newText) -> filtrar());
-        filtroTipoComboBox.setOnAction(e -> filtrar());
-        reservasTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> cancelarButton.setDisable(newSelection == null));
-        carregarReservas();
+
+        cancelarButton.disableProperty().bind(reservasTableView.getSelectionModel().selectedItemProperty().isNull());
     }
 
     private void carregarReservas() {

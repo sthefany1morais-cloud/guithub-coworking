@@ -4,13 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import main.java.model.espacos.Espaco;
 import main.java.service.EspacoService;
@@ -66,7 +60,7 @@ public class CriarReservaController {
     }
 
     private void carregarEspacos() {
-        espacosList = FXCollections.observableArrayList(espacoService.listarTodos());
+        espacosList = FXCollections.observableArrayList(espacoService.listarExistentes());  // Apenas existentes
         filteredList = new FilteredList<>(espacosList, p -> true);
         espacosTableView.setItems(filteredList);
         if (espacosList.isEmpty()) {
@@ -108,6 +102,11 @@ public class CriarReservaController {
     private void criarReserva() {
         Espaco selecionado = espacosTableView.getSelectionModel().getSelectedItem();
         if (selecionado != null) {
+            if (!selecionado.isDisponivel()) {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Espaço indisponível para reserva.");
+                alert.showAndWait();
+                return;
+            }
             DetalhesReservaController.setEspacoSelecionado(selecionado);
             mainApp.mudarScene("DetalhesReserva.fxml");
         }

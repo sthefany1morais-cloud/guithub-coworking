@@ -14,6 +14,7 @@ import main.java.model.reservas.Reserva;
 import main.java.service.EspacoService;
 import main.java.service.ReservaService;
 import main.java.view.MainCoworking;
+import javafx.beans.binding.BooleanBinding;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -49,6 +50,7 @@ public class EditarEspacosController {
 
     public void setEspacoService(EspacoService espacoService) {
         this.espacoService = espacoService;
+        carregarEspacos();
     }
 
     public void setReservaService(ReservaService reservaService) {  // Adicionado
@@ -59,25 +61,25 @@ public class EditarEspacosController {
     private void initialize() {
         filtroTipoComboBox.setItems(FXCollections.observableArrayList("Todos", "Sala de Reunião", "Cabine Individual", "Auditório"));
         filtroTipoComboBox.setValue("Todos");
-
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         nomeColumn.setCellValueFactory(new PropertyValueFactory<>("nome"));
         tipoColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getClass().getSimpleName()));
         capacidadeColumn.setCellValueFactory(new PropertyValueFactory<>("capacidade"));
         precoColumn.setCellValueFactory(new PropertyValueFactory<>("precoPorHora"));
         disponivelColumn.setCellValueFactory(new PropertyValueFactory<>("disponivel"));
-
+        // Adicionar listeners para todos os filtros
         buscaField.textProperty().addListener((obs, oldText, newText) -> filtrar());
         filtroTipoComboBox.setOnAction(e -> filtrar());
-
-        disponiveisCheckBox.setSelected(true);  // Inicialmente marcados
+        disponiveisCheckBox.setOnAction(e -> filtrar());
+        indisponiveisCheckBox.setOnAction(e -> filtrar());
+        editarButton.disableProperty().bind(espacosTableView.getSelectionModel().selectedItemProperty().isNull());
+        excluirButton.disableProperty().bind(espacosTableView.getSelectionModel().selectedItemProperty().isNull());
+        disponiveisCheckBox.setSelected(true);
         indisponiveisCheckBox.setSelected(true);
-        carregarEspacos();
-
     }
 
     private void carregarEspacos() {
-        espacosList = FXCollections.observableArrayList(espacoService.listarTodos());
+        espacosList = FXCollections.observableArrayList(espacoService.listarExistentes());  // Lista apenas existentes
         filteredList = new FilteredList<>(espacosList, p -> true);
         espacosTableView.setItems(filteredList);
         if (espacosList.isEmpty()) {
@@ -94,12 +96,20 @@ public class EditarEspacosController {
         boolean mostrarIndisponiveis = indisponiveisCheckBox.isSelected();
         filteredList.setPredicate(espaco -> {
             boolean matchesBusca = busca.isEmpty() || String.valueOf(espaco.getId()).contains(busca) || espaco.getNome().toLowerCase().contains(busca);
-            boolean matchesTipo = "Todos".equals(tipo) || espaco.getClass().getSimpleName().equals(tipo.replace(" ", ""));
+            boolean matchesTipo = "Todos".equals(tipo) || espaco.getClass().getSimpleName().equals(mapTipo(tipo));
             boolean matchesDisponivel = (mostrarDisponiveis && espaco.isDisponivel()) || (mostrarIndisponiveis && !espaco.isDisponivel());
             return matchesBusca && matchesTipo && matchesDisponivel;
         });
     }
 
+    private String mapTipo(String tipo) {
+        switch (tipo) {
+            case "Sala de Reunião": return "SalaDeReuniao";
+            case "Cabine Individual": return "CabineIndividual";
+            case "Auditório": return "Auditorio";
+            default: return tipo;
+        }
+    }
 
     @FXML
     private void editar() {
@@ -115,18 +125,21 @@ public class EditarEspacosController {
         Espaco selecionado = espacosTableView.getSelectionModel().getSelectedItem();
         if (selecionado != null) {
             try {
-                boolean possuiReservas = reservaService.possuiReservasAtivas(selecionado);  // Agora funciona
+                boolean possuiReservas = reservaService.possuiReservasAtivas(selecionado);
                 espacoService.removerEspaco(selecionado.getId(), possuiReservas);
                 Alert alert = new Alert(Alert.AlertType.INFORMATION, "Espaço removido!");
                 alert.showAndWait();
                 carregarEspacos();
             } catch (EspacoComReservasAtivasException e) {
-                mensagemLabel.setText("Erro: " + e.getMessage());
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Erro: " + e.getMessage());
+                alert.showAndWait();
             } catch (Exception e) {
-                mensagemLabel.setText("Erro inesperado: " + e.getMessage());
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Erro inesperado: " + e.getMessage());
+                alert.showAndWait();
             }
         }
     }
+
     @FXML
     private void voltar() {
         mainApp.mudarScene("MenuEspacos.fxml");

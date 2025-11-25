@@ -3,6 +3,8 @@ package main.java.service;
 import main.java.dao.adaptacao.EspacoDAO;
 import main.java.execoes.*;
 import main.java.model.espacos.*;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,6 +76,16 @@ public class EspacoService {
 
     public List<Espaco> listarTodos() {
         return espacoDAO.carregarTodos();
+    }
+
+    public List<Espaco> listarExistentes() {
+        ArrayList<Espaco> espacos = new ArrayList<>();
+        for (Espaco espaco: listarTodos()){
+            if (espaco.isExistente()){
+                espacos.add(espaco);
+            }
+        }
+        return espacos;
     }
 
     public <T extends Espaco> List<T> listarPorTipo(Class<T> tipo) {

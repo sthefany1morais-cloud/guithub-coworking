@@ -19,6 +19,8 @@ import main.java.model.pagamentos.MetodoDePagamento;
 import main.java.service.EspacoService;
 import main.java.service.ReservaService;
 import main.java.view.MainCoworking;
+import main.java.service.SistemaService;
+import javafx.beans.binding.BooleanBinding;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -40,9 +42,14 @@ public class DetalhesReservaController {
     private MainCoworking mainApp;
     private EspacoService espacoService;
     private ReservaService reservaService;
+    private SistemaService sistemaService;
 
     public static void setEspacoSelecionado(Espaco espaco) {
         espacoSelecionado = espaco;
+    }
+
+    public void setSistemaService(SistemaService sistemaService) {
+        this.sistemaService = sistemaService;
     }
 
     public void setMainApp(MainCoworking mainApp) {
@@ -59,8 +66,31 @@ public class DetalhesReservaController {
 
     @FXML
     private void initialize() {
+
         metodoComboBox.setItems(FXCollections.observableArrayList("PIX", "CARTAO", "DINHEIRO"));
         projetorCheckBox.setVisible(espacoSelecionado instanceof SalaDeReuniao);
+        // Inicializa campos de hora com 00:00
+        horaInicioField.setText("00:00");
+        horaFimField.setText("00:00");
+        // Listeners para formatação em tempo real de horas
+        horaInicioField.textProperty().addListener((obs, oldText, newText) -> {
+            if (!newText.equals(sistemaService.formatarHoras(newText))) {
+                horaInicioField.setText(sistemaService.formatarHoras(newText));
+            }
+        });
+        horaFimField.textProperty().addListener((obs, oldText, newText) -> {
+            if (!newText.equals(sistemaService.formatarHoras(newText))) {
+                horaFimField.setText(sistemaService.formatarHoras(newText));
+            }
+        });
+
+        // Desabilitar salvar até tudo preenchido
+        BooleanBinding tudoPreenchido = dataInicioPicker.valueProperty().isNotNull()
+                .and(dataFimPicker.valueProperty().isNotNull())
+                .and(horaInicioField.textProperty().isNotEmpty())
+                .and(horaFimField.textProperty().isNotEmpty())
+                .and(metodoComboBox.valueProperty().isNotNull());
+        salvarButton.disableProperty().bind(tudoPreenchido.not());
         dataInicioPicker.setOnAction(e -> calcularCusto());
         horaInicioField.setOnKeyReleased(e -> calcularCusto());
         dataFimPicker.setOnAction(e -> calcularCusto());
@@ -92,9 +122,22 @@ public class DetalhesReservaController {
         try {
             LocalDateTime inicio = LocalDateTime.of(dataInicioPicker.getValue(), LocalTime.parse(horaInicioField.getText()));
             LocalDateTime fim = LocalDateTime.of(dataFimPicker.getValue(), LocalTime.parse(horaFimField.getText()));
+            // Validações: data início <= data fim, horas válidas
+            if (inicio.isAfter(fim)) {
+                errosLabel.setText("Erro: Data/hora de início deve ser antes da data/hora de fim.");
+                return;
+            }
+            if (horaInicioField.getText().matches("\\d{2}:\\d{2}") && LocalTime.parse(horaInicioField.getText()).isAfter(LocalTime.of(23, 59))) {
+                errosLabel.setText("Erro: Hora de início inválida (00:00-23:59).");
+                return;
+            }
+            if (horaFimField.getText().matches("\\d{2}:\\d{2}") && LocalTime.parse(horaFimField.getText()).isAfter(LocalTime.of(23, 59))) {
+                errosLabel.setText("Erro: Hora de fim inválida (00:00-23:59).");
+                return;
+            }
+
             MetodoDePagamento metodo = MetodoDePagamento.valueOf(metodoComboBox.getValue());
             boolean projetor = projetorCheckBox.isSelected();
-
             reservaService.criarReserva(espacoSelecionado.getId(), inicio, fim, metodo, projetor);
             errosLabel.setText("");
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Reserva criada com sucesso!");

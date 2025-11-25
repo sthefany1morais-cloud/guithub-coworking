@@ -58,6 +58,7 @@ public class MainCoworking extends Application {
             } else if (controller instanceof CadastroEspacoController) {
                 ((CadastroEspacoController) controller).setMainApp(this);
                 ((CadastroEspacoController) controller).setEspacoService(espacoService);
+                ((CadastroEspacoController) controller).setSistemaService(sistemaService);
             } else if (controller instanceof EditarEspacosController) {
                 ((EditarEspacosController) controller).setMainApp(this);
                 ((EditarEspacosController) controller).setEspacoService(espacoService);
@@ -65,6 +66,7 @@ public class MainCoworking extends Application {
             } else if (controller instanceof EditarEspacoDetalhesController) {
                 ((EditarEspacoDetalhesController) controller).setMainApp(this);
                 ((EditarEspacoDetalhesController) controller).setEspacoService(espacoService);
+                ((EditarEspacoDetalhesController) controller).setSistemaService(sistemaService);
             } else if (controller instanceof ReservaMenuController) {
                 ((ReservaMenuController) controller).setMainApp(this);
                 ((ReservaMenuController) controller).setReservaService(reservaService);
