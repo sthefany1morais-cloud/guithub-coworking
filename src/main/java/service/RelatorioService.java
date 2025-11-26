@@ -110,14 +110,8 @@ public class RelatorioService {
     }
 
     /** Top N espaços mais utilizados */
-    public List<Map.Entry<Integer, Long>> topEspacosMaisUsados(int topN, Boolean disponivel) {
-        Map<Integer, Long> total = totalReservasPorEspaco();
-        return total.entrySet().stream()
-                .filter(e -> {
-                    Espaco espaco = espacoService.buscarTodosPorId(e.getKey());  // Corrigido
-                    if (disponivel == null) return true;
-                    return disponivel ? espaco.isDisponivel() : !espaco.isDisponivel();
-                })
+    public List<Map.Entry<Integer, Long>> topEspacosMaisUsados(int topN) {
+        return totalReservasPorEspaco().entrySet().stream()
                 .sorted(Map.Entry.<Integer, Long>comparingByValue().reversed())
                 .limit(topN)
                 .collect(Collectors.toList());

@@ -33,20 +33,8 @@
                 </HBox>
                 <HBox fx:id="statusHBox" spacing="10.0" visible="false">
                     <children>
-                        <CheckBox fx:id="ativasCheckBox" text="Visualizar Ativas" />
-                        <CheckBox fx:id="inativasCheckBox" text="Visualizar Inativas" />
-                    </children>
-                </HBox>
-                <HBox fx:id="tipoEspacoHBox" spacing="10.0" visible="false">
-                    <children>
-                        <Label text="Tipo de Espaço:" />
-                        <ComboBox fx:id="tipoEspacoComboBox" prefWidth="150.0" />
-                    </children>
-                </HBox>
-                <HBox fx:id="metodoHBox" spacing="10.0" visible="false">
-                    <children>
-                        <Label text="Método Pagamento:" />
-                        <ComboBox fx:id="metodoComboBox" prefWidth="150.0" />
+                        <CheckBox fx:id="ativasCheckBox" text="Reservas Ativas" />
+                        <CheckBox fx:id="inativasCheckBox" text="Reservas Inativas" />
                     </children>
                 </HBox>
                 <HBox fx:id="topHBox" spacing="10.0" visible="false">
@@ -57,13 +45,13 @@
                 </HBox>
                 <HBox fx:id="disponibilidadeHBox" spacing="10.0" visible="false">
                     <children>
-                        <CheckBox fx:id="disponiveisCheckBox" text="Disponíveis" />
-                        <CheckBox fx:id="indisponiveisCheckBox" text="Indisponíveis" />
+                        <CheckBox fx:id="disponiveisCheckBox" text="Espaços Disponíveis" />
+                        <CheckBox fx:id="indisponiveisCheckBox" text="Espaços Indisponíveis" />
                     </children>
                 </HBox>
                 <Button fx:id="gerarButton" mnemonicParsing="false" text="Gerar Relatório" onAction="#gerar" />
                 <Button fx:id="voltarButton" mnemonicParsing="false" text="Voltar" onAction="#voltar" />
-                <Label fx:id="errosLabel" text="" wrapText="true" prefWidth="600.0" />  <!-- Adicionado para erros -->
+                <Label fx:id="errosLabel" text="" wrapText="true" prefWidth="600.0" />
             </children>
         </VBox>
     </center>

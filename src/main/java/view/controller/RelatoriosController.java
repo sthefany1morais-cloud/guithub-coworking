@@ -67,14 +67,15 @@ public class RelatoriosController {
         tipoRelatorioComboBox.setItems(FXCollections.observableArrayList(
                 "Reservas realizadas em um período", "Faturamento por tipo de espaço", "Utilização por espaço", "Top espaços mais utilizados"
         ));
-        tipoEspacoComboBox.setItems(FXCollections.observableArrayList("Sala de Reunião", "Cabine Individual", "Auditório"));
-        metodoComboBox.setItems(FXCollections.observableArrayList("PIX", "CARTAO", "DINHEIRO"));
         topSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10, 3));
+
+        // Desabilitar edição manual nos DatePickers
+        dataInicioPicker.setEditable(false);
+        dataFimPicker.setEditable(false);
 
         // Por padrão, ambas checkboxes marcadas (mostrar todos)
         ativasCheckBox.setSelected(true);
         inativasCheckBox.setSelected(true);
-
         disponiveisCheckBox.setSelected(true);
         indisponiveisCheckBox.setSelected(true);
 
@@ -89,7 +90,6 @@ public class RelatoriosController {
                 ativasCheckBox.setSelected(true);
             }
         });
-
         disponiveisCheckBox.setOnAction(e -> {
             if (!disponiveisCheckBox.isSelected() && !indisponiveisCheckBox.isSelected()) {
                 indisponiveisCheckBox.setSelected(true);
@@ -108,25 +108,24 @@ public class RelatoriosController {
         String tipo = tipoRelatorioComboBox.getValue();
         periodoHBox.setVisible(false);
         statusHBox.setVisible(false);
-        tipoEspacoHBox.setVisible(false);
-        metodoHBox.setVisible(false);
         topHBox.setVisible(false);
         HBox disponibilidadeHBox = new HBox(10, new Label("Disponibilidade:"), disponiveisCheckBox, indisponiveisCheckBox);
+        disponibilidadeHBox.setVisible(false);
 
         if ("Reservas realizadas em um período".equals(tipo)) {
-            descricaoLabel.setText("Exibe reservas em um período específico, com filtros por status.");
+            descricaoLabel.setText("Exibe reservas em um período específico, com filtros por status de reservas.");
             periodoHBox.setVisible(true);
             statusHBox.setVisible(true);
         } else if ("Faturamento por tipo de espaço".equals(tipo)) {
-            descricaoLabel.setText("Exibe faturamento total por tipo de espaço.");
+            descricaoLabel.setText("Exibe faturamento total geral por tipo de espaço (sempre considerando valores reais de pagamentos).");
         } else if ("Utilização por espaço".equals(tipo)) {
-            descricaoLabel.setText("Exibe horas de utilização por espaço em um período.");
+            descricaoLabel.setText("Exibe horas de utilização por espaço em um período (sempre considerando reservas ativas).");
             periodoHBox.setVisible(true);
-            statusHBox.setVisible(true);
+            // statusHBox não mostrado, pois horas sempre ativas
         } else if ("Top espaços mais utilizados".equals(tipo)) {
-            descricaoLabel.setText("Exibe top espaços mais utilizados, com filtros por disponibilidade.");
+            descricaoLabel.setText("Exibe top espaços mais utilizados, com filtros por disponibilidade de espaços.");
             topHBox.setVisible(true);
-            disponibilidadeHBox.setVisible(true);  // Mostrar checkboxes de disponibilidade
+            disponibilidadeHBox.setVisible(true);
         }
     }
 
@@ -178,7 +177,6 @@ public class RelatoriosController {
                 }
                 LocalDateTime inicio = dataInicioPicker.getValue().atStartOfDay();
                 LocalDateTime fim = dataFimPicker.getValue().atTime(23, 59);
-                boolean somenteAtivas = ativasCheckBox.isSelected() && !inativasCheckBox.isSelected();
                 Map<Integer, Double> utilizacao = relatorioService.horasReservadas(inicio, fim);
                 if (utilizacao.isEmpty()) {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "Nenhuma utilização encontrada no período selecionado.");
@@ -195,7 +193,7 @@ public class RelatoriosController {
                 int topN = topSpinner.getValue();
                 if (topN <= 0) throw new ValidacaoException(List.of("Top N deve ser maior que 0."));
                 Boolean disponivel = disponiveisCheckBox.isSelected() && indisponiveisCheckBox.isSelected() ? null : (disponiveisCheckBox.isSelected() ? true : false);
-                List<Map.Entry<Integer, Long>> top = relatorioService.topEspacosMaisUsados(topN, disponivel);
+                List<Map.Entry<Integer, Long>> top = relatorioService.topEspacosMaisUsados(topN);
                 if (top.isEmpty()) {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "Nenhum espaço encontrado para o top selecionado.");
                     alert.showAndWait();

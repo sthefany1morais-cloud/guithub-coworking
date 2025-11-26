@@ -39,6 +39,7 @@ public class ReservaService {
         Reserva reserva = new Reserva(espaco, inicio, fim, metodo, projetor);
 
         reservaDAO.salvar(reserva);
+        pagamentoService.atualizar(reserva.getPagamento());
 
         return reserva;
     }
