@@ -14,10 +14,11 @@
                 <Label fx:id="tituloPopupLabel" text="Relatório Gerado" />
                 <TableView fx:id="relatorioPopupTableView" prefHeight="200.0" prefWidth="500.0">
                     <columns>
-                        <TableColumn fx:id="coluna1" text="Coluna 1" prefWidth="125.0" />
-                        <TableColumn fx:id="coluna2" text="Coluna 2" prefWidth="125.0" />
-                        <TableColumn fx:id="coluna3" text="Coluna 3" prefWidth="125.0" />
-                        <TableColumn fx:id="coluna4" text="Coluna 4" prefWidth="125.0" />
+                        <TableColumn fx:id="coluna1" text="Coluna 1" prefWidth="100.0" />
+                        <TableColumn fx:id="coluna2" text="Coluna 2" prefWidth="100.0" />
+                        <TableColumn fx:id="coluna3" text="Coluna 3" prefWidth="100.0" />
+                        <TableColumn fx:id="coluna4" text="Coluna 4" prefWidth="100.0" />
+                        <TableColumn fx:id="coluna5" text="Coluna 5" prefWidth="100.0" />
                     </columns>
                 </TableView>
                 <Label fx:id="resumoPopupLabel" text="" wrapText="true" prefWidth="500.0" />

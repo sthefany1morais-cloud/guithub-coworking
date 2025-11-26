@@ -3,6 +3,7 @@ package main.java.view.controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import main.java.execoes.ValidacaoException;
@@ -11,6 +12,13 @@ import main.java.model.pagamentos.MetodoDePagamento;
 import main.java.model.reservas.Reserva;
 import main.java.service.RelatorioService;
 import main.java.view.MainCoworking;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
+import javafx.fxml.FXMLLoader;
+
+import java.util.Arrays;
+import java.util.function.UnaryOperator;
+import javafx.scene.control.TextFormatter;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -55,6 +63,22 @@ public class RelatoriosController {
         metodoComboBox.setItems(FXCollections.observableArrayList("PIX", "CARTAO", "DINHEIRO"));
         topSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10, 3));
 
+        // Por padrão, ambas checkboxes marcadas (mostrar todos)
+        ativasCheckBox.setSelected(true);
+        inativasCheckBox.setSelected(true);
+
+        // Listener para impedir desmarcar ambas
+        ativasCheckBox.setOnAction(e -> {
+            if (!ativasCheckBox.isSelected() && !inativasCheckBox.isSelected()) {
+                inativasCheckBox.setSelected(true);
+            }
+        });
+        inativasCheckBox.setOnAction(e -> {
+            if (!ativasCheckBox.isSelected() && !inativasCheckBox.isSelected()) {
+                ativasCheckBox.setSelected(true);
+            }
+        });
+
         tipoRelatorioComboBox.setOnAction(e -> atualizarCampos());
     }
 
@@ -91,51 +115,98 @@ public class RelatoriosController {
             String tipo = tipoRelatorioComboBox.getValue();
             ObservableList<ObservableList<String>> dados = FXCollections.observableArrayList();
             String resumo = "";
+            List<String> nomesColunas = Arrays.asList("Coluna 1", "Coluna 2", "Coluna 3", "Coluna 4", "Coluna 5");
             if ("Reservas por Período".equals(tipo)) {
+                if (dataInicioPicker.getValue() == null || dataFimPicker.getValue() == null) {
+                    throw new ValidacaoException(List.of("Datas de início e fim são obrigatórias."));
+                }
                 LocalDateTime inicio = dataInicioPicker.getValue().atStartOfDay();
                 LocalDateTime fim = dataFimPicker.getValue().atTime(23, 59);
-                Boolean ativo = ativasCheckBox.isSelected() ? true : (inativasCheckBox.isSelected() ? false : null);
+                Boolean ativo = ativasCheckBox.isSelected() && inativasCheckBox.isSelected() ? null : (ativasCheckBox.isSelected() ? true : false);
                 List<Reserva> reservas = relatorioService.reservasPorPeriodo(inicio, fim, ativo);
+                if (reservas.isEmpty()) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Nenhuma reserva encontrada no período selecionado.");
+                    alert.showAndWait();
+                    return;
+                }
+                nomesColunas = Arrays.asList("ID Reserva", "Nome Espaço", "Início", "Fim", "Status", "Disponibilidade");
                 for (Reserva r : reservas) {
                     ObservableList<String> linha = FXCollections.observableArrayList(
-                            String.valueOf(r.getId()), r.getEspaco().getNome(), r.getInicio().toString(), r.getFim().toString()
+                            String.valueOf(r.getId()), r.getEspaco().getNome(), r.getInicio().toString(), r.getFim().toString(),
+                            r.isAtivo() ? "Ativa" : "Inativa", r.getEspaco().isDisponivel() ? "Disponível" : "Indisponível"
                     );
                     dados.add(linha);
                 }
                 resumo = "Total de reservas: " + reservas.size();
             } else if ("Reservas por Tipo".equals(tipo)) {
-                Class<?> tipoEspaco = Class.forName("main.java.model.espacos." + tipoEspacoComboBox.getValue().replace(" ", ""));
-                List<Reserva> reservas = relatorioService.reservasPorTipoEspaco((Class<? extends Espaco>) tipoEspaco, null);
-                // ... (similar ao acima)
+                if (tipoEspacoComboBox.getValue() == null) {
+                    throw new ValidacaoException(List.of("Tipo de espaço é obrigatório."));
+                }
+                Class<? extends Espaco> tipoEspaco = switch (tipoEspacoComboBox.getValue()) {
+                    case "Sala de Reunião" -> main.java.model.espacos.SalaDeReuniao.class;
+                    case "Cabine Individual" -> main.java.model.espacos.CabineIndividual.class;
+                    case "Auditório" -> main.java.model.espacos.Auditorio.class;
+                    default -> throw new ValidacaoException(List.of("Tipo de espaço inválido."));
+                };
+                List<Reserva> reservas = relatorioService.reservasPorTipoEspaco(tipoEspaco, null);
+                if (reservas.isEmpty()) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Nenhuma reserva encontrada para o tipo de espaço selecionado.");
+                    alert.showAndWait();
+                    return;
+                }
+                nomesColunas = Arrays.asList("ID Reserva", "Nome Espaço", "Início", "Fim", "Status", "Disponibilidade");
+                for (Reserva r : reservas) {
+                    ObservableList<String> linha = FXCollections.observableArrayList(
+                            String.valueOf(r.getId()), r.getEspaco().getNome(), r.getInicio().toString(), r.getFim().toString(),
+                            r.isAtivo() ? "Ativa" : "Inativa", r.getEspaco().isDisponivel() ? "Disponível" : "Indisponível"
+                    );
+                    dados.add(linha);
+                }
+                resumo = "Total de reservas: " + reservas.size();
             } else if ("Faturamento por Método".equals(tipo)) {
+                if (dataInicioPicker.getValue() == null || dataFimPicker.getValue() == null || metodoComboBox.getValue() == null) {
+                    throw new ValidacaoException(List.of("Datas e método de pagamento são obrigatórios."));
+                }
                 LocalDateTime inicio = dataInicioPicker.getValue().atStartOfDay();
                 LocalDateTime fim = dataFimPicker.getValue().atTime(23, 59);
                 MetodoDePagamento metodo = MetodoDePagamento.valueOf(metodoComboBox.getValue());
                 double faturamento = relatorioService.faturamentoPorMetodo(metodo, inicio, fim);
-                dados.add(FXCollections.observableArrayList("Método", "Faturamento", metodo.toString(), String.format("%.2f", faturamento)));
+                if (faturamento == 0) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Nenhum faturamento encontrado para o método e período selecionados.");
+                    alert.showAndWait();
+                    return;
+                }
+                nomesColunas = Arrays.asList("Método", "Faturamento", "", "", "");
+                dados.add(FXCollections.observableArrayList("Método", "Faturamento", metodo.toString(), String.format("%.2f", faturamento), ""));
                 resumo = "Faturamento total: R$" + String.format("%.2f", faturamento);
             } else if ("Top Espaços".equals(tipo)) {
                 int topN = topSpinner.getValue();
                 if (topN <= 0) throw new ValidacaoException(List.of("Top N deve ser maior que 0."));
                 List<Map.Entry<Integer, Long>> top = relatorioService.topEspacosMaisUsados(topN);
-                for (Map.Entry<Integer, Long> entry : top) {
-                    dados.add(FXCollections.observableArrayList("ID Espaço", "Reservas", String.valueOf(entry.getKey()), String.valueOf(entry.getValue())));
+                if (top.isEmpty()) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Nenhum espaço encontrado para o top selecionado.");
+                    alert.showAndWait();
+                    return;
                 }
-                resumo = "Top " + topN + " espaços.";
+                nomesColunas = Arrays.asList("ID Espaço", "Reservas", "", "", "");
+                for (Map.Entry<Integer, Long> entry : top) {
+                    dados.add(FXCollections.observableArrayList("ID Espaço", "Reservas", String.valueOf(entry.getKey()), String.valueOf(entry.getValue()), ""));
+                }
+                resumo = "Top " + Math.min(topN, top.size()) + " espaços.";
             } else if ("Faturamento Total".equals(tipo)) {
                 double total = relatorioService.faturamentoTotal();
-                dados.add(FXCollections.observableArrayList("Total", String.format("%.2f", total)));
+                if (total == 0) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Nenhum faturamento encontrado no sistema.");
+                    alert.showAndWait();
+                    return;
+                }
+                nomesColunas = Arrays.asList("Total", "", "", "", "");
+                dados.add(FXCollections.observableArrayList("Total", String.format("%.2f", total), "", "", ""));
                 resumo = "Faturamento total do sistema.";
             }
-            if (dados.isEmpty()) {
-                errosLabel.setText("Nenhum dado encontrado para o relatório.");
-                return;
-            }
+
             // Abrir popup
-            RelatorioPopupController popup = new RelatorioPopupController();
-            popup.setRelatorioService(relatorioService);
-            popup.setDados(dados, resumo);
-            // ... (abrir Stage para popup)
+            abrirPopup(dados, resumo, nomesColunas);
         } catch (ValidacaoException e) {
             errosLabel.setText("Erros encontrados:\n" + String.join("\n", e.getErros()));
         } catch (Exception e) {
@@ -143,6 +214,23 @@ public class RelatoriosController {
         }
     }
 
+    private void abrirPopup(ObservableList<ObservableList<String>> dados, String resumo, List<String> nomesColunas) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/RelatorioPopup.fxml"));
+            Parent root = loader.load();
+            RelatorioPopupController popupController = loader.getController();
+            popupController.setRelatorioService(relatorioService);
+            popupController.setDados(dados, resumo, nomesColunas);
+
+            Stage popupStage = new Stage();
+            popupStage.setTitle("Relatório");
+            popupStage.setScene(new Scene(root));
+            popupStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            popupStage.showAndWait();
+        } catch (Exception e) {
+            errosLabel.setText("Erro ao abrir popup: " + e.getMessage());
+        }
+    }
 
     @FXML
     private void voltar() {

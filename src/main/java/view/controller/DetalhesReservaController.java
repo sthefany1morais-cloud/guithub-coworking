@@ -55,7 +55,10 @@ public class DetalhesReservaController {
     private void initialize() {
         metodoComboBox.setItems(FXCollections.observableArrayList("PIX", "CARTAO", "DINHEIRO"));
         projetorCheckBox.setVisible(espacoSelecionado instanceof SalaDeReuniao);
-        projetorLabel.setVisible(espacoSelecionado instanceof SalaDeReuniao);  // Adicionado
+        projetorLabel.setVisible(espacoSelecionado instanceof SalaDeReuniao);
+        // Bloquear digitação manual no DatePicker (só calendário)
+        dataInicioPicker.setEditable(false);
+        dataFimPicker.setEditable(false);
         // TextFormatter para horas: máximo 5 caracteres, só números ou ":"
         UnaryOperator<TextFormatter.Change> horaFilter = change -> {
             String newText = change.getControlNewText();
