@@ -43,8 +43,6 @@ public class RelatoriosController {
     @FXML private Button gerarButton;
     @FXML private Button voltarButton;
     @FXML private Label errosLabel;
-    @FXML private CheckBox disponiveisCheckBox;
-    @FXML private CheckBox indisponiveisCheckBox;
 
     private MainCoworking mainApp;
     private RelatorioService relatorioService;
@@ -76,8 +74,6 @@ public class RelatoriosController {
         // Por padrão, ambas checkboxes marcadas (mostrar todos)
         ativasCheckBox.setSelected(true);
         inativasCheckBox.setSelected(true);
-        disponiveisCheckBox.setSelected(true);
-        indisponiveisCheckBox.setSelected(true);
 
         // Listener para impedir desmarcar ambas
         ativasCheckBox.setOnAction(e -> {
@@ -90,16 +86,6 @@ public class RelatoriosController {
                 ativasCheckBox.setSelected(true);
             }
         });
-        disponiveisCheckBox.setOnAction(e -> {
-            if (!disponiveisCheckBox.isSelected() && !indisponiveisCheckBox.isSelected()) {
-                indisponiveisCheckBox.setSelected(true);
-            }
-        });
-        indisponiveisCheckBox.setOnAction(e -> {
-            if (!disponiveisCheckBox.isSelected() && !indisponiveisCheckBox.isSelected()) {
-                disponiveisCheckBox.setSelected(true);
-            }
-        });
 
         tipoRelatorioComboBox.setOnAction(e -> atualizarCampos());
     }
@@ -109,8 +95,6 @@ public class RelatoriosController {
         periodoHBox.setVisible(false);
         statusHBox.setVisible(false);
         topHBox.setVisible(false);
-        HBox disponibilidadeHBox = new HBox(10, new Label("Disponibilidade:"), disponiveisCheckBox, indisponiveisCheckBox);
-        disponibilidadeHBox.setVisible(false);
 
         if ("Reservas realizadas em um período".equals(tipo)) {
             descricaoLabel.setText("Exibe reservas em um período específico, com filtros por status de reservas.");
@@ -121,11 +105,9 @@ public class RelatoriosController {
         } else if ("Utilização por espaço".equals(tipo)) {
             descricaoLabel.setText("Exibe horas de utilização por espaço em um período (sempre considerando reservas ativas).");
             periodoHBox.setVisible(true);
-            // statusHBox não mostrado, pois horas sempre ativas
         } else if ("Top espaços mais utilizados".equals(tipo)) {
-            descricaoLabel.setText("Exibe top espaços mais utilizados, com filtros por disponibilidade de espaços.");
+            descricaoLabel.setText("Exibe top espaços mais utilizados (inclui todos os espaços com reservas, mesmo excluídos).");
             topHBox.setVisible(true);
-            disponibilidadeHBox.setVisible(true);
         }
     }
 
@@ -137,7 +119,6 @@ public class RelatoriosController {
             String resumo = "";
             List<String> nomesColunas = Arrays.asList("Coluna 1", "Coluna 2", "Coluna 3", "Coluna 4", "Coluna 5");
             if ("Reservas realizadas em um período".equals(tipo)) {
-                // Igual ao anterior, mas nome ajustado
                 if (dataInicioPicker.getValue() == null || dataFimPicker.getValue() == null) {
                     throw new ValidacaoException(List.of("Datas de início e fim são obrigatórias."));
                 }
@@ -160,7 +141,7 @@ public class RelatoriosController {
                 }
                 resumo = "Total de reservas: " + reservas.size();
             } else if ("Faturamento por tipo de espaço".equals(tipo)) {
-                Map<String, Double> faturamento = relatorioService.faturamentoPorTipoEspaco(LocalDateTime.MIN, LocalDateTime.MAX);  // Total geral
+                Map<String, Double> faturamento = relatorioService.faturamentoPorTipoEspaco(LocalDateTime.MIN, LocalDateTime.MAX);
                 if (faturamento.isEmpty()) {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "Nenhum faturamento encontrado.");
                     alert.showAndWait();
@@ -192,7 +173,6 @@ public class RelatoriosController {
             } else if ("Top espaços mais utilizados".equals(tipo)) {
                 int topN = topSpinner.getValue();
                 if (topN <= 0) throw new ValidacaoException(List.of("Top N deve ser maior que 0."));
-                Boolean disponivel = disponiveisCheckBox.isSelected() && indisponiveisCheckBox.isSelected() ? null : (disponiveisCheckBox.isSelected() ? true : false);
                 List<Map.Entry<Integer, Long>> top = relatorioService.topEspacosMaisUsados(topN);
                 if (top.isEmpty()) {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "Nenhum espaço encontrado para o top selecionado.");
