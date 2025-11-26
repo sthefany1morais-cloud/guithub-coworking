@@ -62,7 +62,7 @@ public class MainCoworking extends Application {
             } else if (controller instanceof EditarEspacosController) {
                 ((EditarEspacosController) controller).setMainApp(this);
                 ((EditarEspacosController) controller).setEspacoService(espacoService);
-                ((EditarEspacosController) controller).setReservaService(reservaService);  // Adicionado para excluir()
+                ((EditarEspacosController) controller).setReservaService(reservaService);
             } else if (controller instanceof EditarEspacoDetalhesController) {
                 ((EditarEspacoDetalhesController) controller).setMainApp(this);
                 ((EditarEspacoDetalhesController) controller).setEspacoService(espacoService);
@@ -82,6 +82,7 @@ public class MainCoworking extends Application {
             } else if (controller instanceof RelatoriosController) {
                 ((RelatoriosController) controller).setMainApp(this);
                 ((RelatoriosController) controller).setRelatorioService(relatorioService);
+                ((RelatoriosController) controller).setEspacoService(espacoService);
             } else if (controller instanceof RelatorioPopupController) {
                 ((RelatorioPopupController) controller).setRelatorioService(relatorioService);
             }

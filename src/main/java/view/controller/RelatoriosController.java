@@ -10,6 +10,7 @@ import main.java.execoes.ValidacaoException;
 import main.java.model.espacos.Espaco;
 import main.java.model.pagamentos.MetodoDePagamento;
 import main.java.model.reservas.Reserva;
+import main.java.service.EspacoService;
 import main.java.service.RelatorioService;
 import main.java.view.MainCoworking;
 import javafx.stage.Stage;
@@ -45,6 +46,7 @@ public class RelatoriosController {
 
     private MainCoworking mainApp;
     private RelatorioService relatorioService;
+    private EspacoService espacoService;
 
     public void setMainApp(MainCoworking mainApp) {
         this.mainApp = mainApp;
@@ -52,6 +54,10 @@ public class RelatoriosController {
 
     public void setRelatorioService(RelatorioService relatorioService) {
         this.relatorioService = relatorioService;
+    }
+
+    public void setEspacoService(EspacoService espacoService) {
+        this.espacoService = espacoService;
     }
 
     @FXML
@@ -177,7 +183,7 @@ public class RelatoriosController {
                     return;
                 }
                 nomesColunas = Arrays.asList("Método", "Faturamento", "", "", "");
-                dados.add(FXCollections.observableArrayList("Método", "Faturamento", metodo.toString(), String.format("%.2f", faturamento), ""));
+                dados.add(FXCollections.observableArrayList(metodo.toString(), String.format("%.2f", faturamento), "", "", ""));
                 resumo = "Faturamento total: R$" + String.format("%.2f", faturamento);
             } else if ("Top Espaços".equals(tipo)) {
                 int topN = topSpinner.getValue();
@@ -188,9 +194,10 @@ public class RelatoriosController {
                     alert.showAndWait();
                     return;
                 }
-                nomesColunas = Arrays.asList("ID Espaço", "Reservas", "", "", "");
+                nomesColunas = Arrays.asList("ID Espaço", "Nome Espaço", "Reservas", "", "");
                 for (Map.Entry<Integer, Long> entry : top) {
-                    dados.add(FXCollections.observableArrayList("ID Espaço", "Reservas", String.valueOf(entry.getKey()), String.valueOf(entry.getValue()), ""));
+                    String nomeEspaco = espacoService.buscarPorId(entry.getKey()).getNome();  // Buscar nome
+                    dados.add(FXCollections.observableArrayList(String.valueOf(entry.getKey()), nomeEspaco, String.valueOf(entry.getValue()), "", ""));
                 }
                 resumo = "Top " + Math.min(topN, top.size()) + " espaços.";
             } else if ("Faturamento Total".equals(tipo)) {
@@ -201,7 +208,7 @@ public class RelatoriosController {
                     return;
                 }
                 nomesColunas = Arrays.asList("Total", "", "", "", "");
-                dados.add(FXCollections.observableArrayList("Total", String.format("%.2f", total), "", "", ""));
+                dados.add(FXCollections.observableArrayList(String.format("%.2f", total), "", "", "", ""));
                 resumo = "Faturamento total do sistema.";
             }
 
