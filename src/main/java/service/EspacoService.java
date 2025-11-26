@@ -37,7 +37,7 @@ public class EspacoService {
         return espaco;
     }
 
-    public Espaco buscarTodosPorId(int id) {
+    public Espaco buscarPorIdTodos(int id) {
         return espacoDAO.buscarPorId(id);
     }
 

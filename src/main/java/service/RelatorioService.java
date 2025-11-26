@@ -111,8 +111,20 @@ public class RelatorioService {
 
     /** Top N espaços mais utilizados */
     public List<Map.Entry<Integer, Long>> topEspacosMaisUsados(int topN) {
-        Map<Integer, Long> total = totalReservasPorEspaco();
-        return total.entrySet().stream()
+        Map<Integer, Long> totalReservas = totalReservasPorEspaco();
+
+        // Incluir todos os espaços, com 0 reservas se não tiverem
+        Map<Integer, Long> todosEspacos = new HashMap<>();
+        for (Espaco espaco : espacoService.listarTodos()) {
+            todosEspacos.put(espaco.getId(), 0L);
+        }
+
+        // Merge com reservas reais
+        for (Map.Entry<Integer, Long> entry : totalReservas.entrySet()) {
+            todosEspacos.put(entry.getKey(), entry.getValue());
+        }
+
+        return todosEspacos.entrySet().stream()
                 .sorted(Map.Entry.<Integer, Long>comparingByValue().reversed())
                 .limit(topN)
                 .collect(Collectors.toList());
@@ -132,7 +144,6 @@ public class RelatorioService {
     /* ============================================================
                       RELATÓRIOS SOBRE PAGAMENTOS
        ============================================================ */
-
     /** Pagamentos dentro de um período */
     public List<Pagamento> pagamentosPorPeriodo(LocalDateTime inicio, LocalDateTime fim) {
         return pagamentosNoPeriodo(inicio, fim);
