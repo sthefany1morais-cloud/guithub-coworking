@@ -18,6 +18,7 @@ public class CancelarReservaController {
     @FXML private TableView<Reserva> reservasTableView;
     @FXML private TableColumn<Reserva, Integer> idColumn;
     @FXML private TableColumn<Reserva, String> espacoColumn;
+    @FXML private TableColumn<Reserva, String> tipoColumn;
     @FXML private TableColumn<Reserva, String> inicioColumn;
     @FXML private TableColumn<Reserva, String> fimColumn;
     @FXML private TableColumn<Reserva, Double> valorColumn;
@@ -43,15 +44,13 @@ public class CancelarReservaController {
     private void initialize() {
         filtroTipoComboBox.setItems(FXCollections.observableArrayList("Todos", "Sala de Reunião", "Cabine Individual", "Auditório"));
         filtroTipoComboBox.setValue("Todos");
-
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         espacoColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getEspaco().getNome()));
+        tipoColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getEspaco().getClass().getSimpleName()));
         inicioColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getInicio().toString()));
         fimColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getFim().toString()));
         valorColumn.setCellValueFactory(new PropertyValueFactory<>("valorCalculado"));
-
         buscaField.textProperty().addListener((obs, oldText, newText) -> filtrar());
-
         cancelarButton.disableProperty().bind(reservasTableView.getSelectionModel().selectedItemProperty().isNull());
     }
 

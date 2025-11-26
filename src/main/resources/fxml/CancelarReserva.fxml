@@ -25,13 +25,14 @@
                 <TableView fx:id="reservasTableView" prefHeight="200.0" prefWidth="500.0">
                     <columns>
                         <TableColumn fx:id="idColumn" text="ID" prefWidth="50.0" />
-                        <TableColumn fx:id="espacoColumn" text="Espaço" prefWidth="150.0" />
-                        <TableColumn fx:id="inicioColumn" text="Início" prefWidth="120.0" />
-                        <TableColumn fx:id="fimColumn" text="Fim" prefWidth="120.0" />
+                        <TableColumn fx:id="espacoColumn" text="Nome" prefWidth="120.0" />
+                        <TableColumn fx:id="tipoColumn" text="Tipo" prefWidth="100.0" />
+                        <TableColumn fx:id="inicioColumn" text="Início" prefWidth="100.0" />
+                        <TableColumn fx:id="fimColumn" text="Fim" prefWidth="100.0" />
                         <TableColumn fx:id="valorColumn" text="Valor" prefWidth="80.0" />
                     </columns>
                 </TableView>
-                <Label fx:id="mensagemLabel" text="" wrapText="true" prefWidth="500.0" />  <!-- Adicionado para mensagens vazias/erros -->
+                <Label fx:id="mensagemLabel" text="" wrapText="true" prefWidth="500.0" />
                 <Button fx:id="cancelarButton" mnemonicParsing="false" text="Cancelar Selecionada" disable="true" onAction="#cancelar" />
                 <Button fx:id="voltarButton" mnemonicParsing="false" text="Voltar" onAction="#voltar" />
             </children>
