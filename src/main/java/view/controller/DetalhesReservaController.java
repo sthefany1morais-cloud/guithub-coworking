@@ -71,6 +71,11 @@ public class DetalhesReservaController {
         dataFimPicker.setOnAction(e -> calcularCusto());
         horaFimField.setOnKeyReleased(e -> calcularCusto());
         projetorCheckBox.setOnAction(e -> calcularCusto());
+        // Desabilitar salvar até método selecionado
+        salvarButton.setDisable(true);
+        metodoComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
+            salvarButton.setDisable(newVal == null || newVal.isEmpty());
+        });
     }
 
     private void carregarEspaco() {
