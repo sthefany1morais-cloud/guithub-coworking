@@ -32,13 +32,13 @@ public class PagamentoService {
         pagamentoDAO.atualizar(p);
     }
 
-    protected void cancelarPagamento(Reserva reserva, double valor) {
-
+    protected void cancelarPagamento(Reserva reserva, double valorCancelado) {
         Pagamento pagamento = reserva.getPagamento();
-            pagamento.setValorPago(valor);
+        if (pagamento != null) {
+            pagamento.setValorPago(valorCancelado);
             pagamento.setData(LocalDateTime.now());
-            pagamento.setIdDaReserva(reserva.getId());
             this.atualizar(pagamento);
+        }
     }
 }
 

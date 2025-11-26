@@ -43,6 +43,8 @@ public class RelatoriosController {
     @FXML private Button gerarButton;
     @FXML private Button voltarButton;
     @FXML private Label errosLabel;
+    @FXML private CheckBox disponiveisCheckBox;
+    @FXML private CheckBox indisponiveisCheckBox;
 
     private MainCoworking mainApp;
     private RelatorioService relatorioService;
@@ -73,6 +75,9 @@ public class RelatoriosController {
         ativasCheckBox.setSelected(true);
         inativasCheckBox.setSelected(true);
 
+        disponiveisCheckBox.setSelected(true);
+        indisponiveisCheckBox.setSelected(true);
+
         // Listener para impedir desmarcar ambas
         ativasCheckBox.setOnAction(e -> {
             if (!ativasCheckBox.isSelected() && !inativasCheckBox.isSelected()) {
@@ -82,6 +87,17 @@ public class RelatoriosController {
         inativasCheckBox.setOnAction(e -> {
             if (!ativasCheckBox.isSelected() && !inativasCheckBox.isSelected()) {
                 ativasCheckBox.setSelected(true);
+            }
+        });
+
+        disponiveisCheckBox.setOnAction(e -> {
+            if (!disponiveisCheckBox.isSelected() && !indisponiveisCheckBox.isSelected()) {
+                indisponiveisCheckBox.setSelected(true);
+            }
+        });
+        indisponiveisCheckBox.setOnAction(e -> {
+            if (!disponiveisCheckBox.isSelected() && !indisponiveisCheckBox.isSelected()) {
+                disponiveisCheckBox.setSelected(true);
             }
         });
 
@@ -95,6 +111,7 @@ public class RelatoriosController {
         tipoEspacoHBox.setVisible(false);
         metodoHBox.setVisible(false);
         topHBox.setVisible(false);
+        HBox disponibilidadeHBox = new HBox(10, new Label("Disponibilidade:"), disponiveisCheckBox, indisponiveisCheckBox);
 
         if ("Reservas realizadas em um período".equals(tipo)) {
             descricaoLabel.setText("Exibe reservas em um período específico, com filtros por status.");
@@ -107,8 +124,9 @@ public class RelatoriosController {
             periodoHBox.setVisible(true);
             statusHBox.setVisible(true);
         } else if ("Top espaços mais utilizados".equals(tipo)) {
-            descricaoLabel.setText("Exibe top espaços mais utilizados.");
+            descricaoLabel.setText("Exibe top espaços mais utilizados, com filtros por disponibilidade.");
             topHBox.setVisible(true);
+            disponibilidadeHBox.setVisible(true);  // Mostrar checkboxes de disponibilidade
         }
     }
 
@@ -161,7 +179,7 @@ public class RelatoriosController {
                 LocalDateTime inicio = dataInicioPicker.getValue().atStartOfDay();
                 LocalDateTime fim = dataFimPicker.getValue().atTime(23, 59);
                 boolean somenteAtivas = ativasCheckBox.isSelected() && !inativasCheckBox.isSelected();
-                Map<Integer, Double> utilizacao = relatorioService.horasReservadas(inicio, fim, somenteAtivas);
+                Map<Integer, Double> utilizacao = relatorioService.horasReservadas(inicio, fim);
                 if (utilizacao.isEmpty()) {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "Nenhuma utilização encontrada no período selecionado.");
                     alert.showAndWait();
@@ -174,10 +192,10 @@ public class RelatoriosController {
                 }
                 resumo = "Utilização por espaço no período.";
             } else if ("Top espaços mais utilizados".equals(tipo)) {
-                // Igual ao anterior
                 int topN = topSpinner.getValue();
                 if (topN <= 0) throw new ValidacaoException(List.of("Top N deve ser maior que 0."));
-                List<Map.Entry<Integer, Long>> top = relatorioService.topEspacosMaisUsados(topN);
+                Boolean disponivel = disponiveisCheckBox.isSelected() && indisponiveisCheckBox.isSelected() ? null : (disponiveisCheckBox.isSelected() ? true : false);
+                List<Map.Entry<Integer, Long>> top = relatorioService.topEspacosMaisUsados(topN, disponivel);
                 if (top.isEmpty()) {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "Nenhum espaço encontrado para o top selecionado.");
                     alert.showAndWait();

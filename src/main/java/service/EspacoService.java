@@ -29,12 +29,16 @@ public class EspacoService {
         }
     }
 
-    public Espaco buscarPorId(int id) throws EspacoInexistenteException, EspacoIndisponivelException {
+    public Espaco buscarPorId(int id) throws EspacoInexistenteException {
         Espaco espaco = espacoDAO.buscarPorId(id);
         if (espaco == null){
             throw new EspacoInexistenteException("Espaço inexistente.");
         }
         return espaco;
+    }
+
+    public Espaco buscarTodosPorId(int id) {
+        return espacoDAO.buscarPorId(id);
     }
 
     public SalaDeReuniao cadastrarSalaDeReuniao(String nome, int capacidade, double precoPorHora,

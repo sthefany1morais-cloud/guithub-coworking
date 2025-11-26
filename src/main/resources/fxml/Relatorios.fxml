@@ -55,6 +55,12 @@
                         <Spinner fx:id="topSpinner" prefWidth="100.0" />
                     </children>
                 </HBox>
+                <HBox fx:id="disponibilidadeHBox" spacing="10.0" visible="false">
+                    <children>
+                        <CheckBox fx:id="disponiveisCheckBox" text="Disponíveis" />
+                        <CheckBox fx:id="indisponiveisCheckBox" text="Indisponíveis" />
+                    </children>
+                </HBox>
                 <Button fx:id="gerarButton" mnemonicParsing="false" text="Gerar Relatório" onAction="#gerar" />
                 <Button fx:id="voltarButton" mnemonicParsing="false" text="Voltar" onAction="#voltar" />
                 <Label fx:id="errosLabel" text="" wrapText="true" prefWidth="600.0" />  <!-- Adicionado para erros -->

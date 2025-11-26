@@ -14,10 +14,12 @@ public class RelatorioService {
 
     private final ReservaService reservaService;
     private final PagamentoService pagamentoService;
+    private final EspacoService espacoService;
 
-    public RelatorioService(ReservaService reservaService, PagamentoService pagamentoService) {
+    public RelatorioService(ReservaService reservaService, PagamentoService pagamentoService, EspacoService espacoService) {
         this.reservaService = reservaService;
         this.pagamentoService = pagamentoService;
+        this.espacoService = espacoService;
     }
 
     /* ============================================================
@@ -31,7 +33,7 @@ public class RelatorioService {
 
     private boolean reservaNoPeriodo(Reserva r, LocalDateTime inicio, LocalDateTime fim) {
         if (r.getInicio() == null || r.getFim() == null) return false;
-        return !r.getFim().isBefore(inicio) && !r.getInicio().isAfter(fim);
+        return !r.getInicio().isBefore(inicio) && !r.getFim().isAfter(fim);  // Totalmente dentro
     }
 
     private boolean pagamentoNoPeriodo(Pagamento p, LocalDateTime inicio, LocalDateTime fim) {
@@ -108,25 +110,29 @@ public class RelatorioService {
     }
 
     /** Top N espaços mais utilizados */
-    public List<Map.Entry<Integer, Long>> topEspacosMaisUsados(int topN) {
-        return totalReservasPorEspaco().entrySet().stream()
+    public List<Map.Entry<Integer, Long>> topEspacosMaisUsados(int topN, Boolean disponivel) {
+        Map<Integer, Long> total = totalReservasPorEspaco();
+        return total.entrySet().stream()
+                .filter(e -> {
+                    Espaco espaco = espacoService.buscarTodosPorId(e.getKey());  // Corrigido
+                    if (disponivel == null) return true;
+                    return disponivel ? espaco.isDisponivel() : !espaco.isDisponivel();
+                })
                 .sorted(Map.Entry.<Integer, Long>comparingByValue().reversed())
                 .limit(topN)
                 .collect(Collectors.toList());
     }
 
     /** Horas reservadas por espaço (considerando sobreposição com o período informado) */
-    public Map<Integer, Double> horasReservadas(LocalDateTime inicio, LocalDateTime fim, boolean somenteAtivas) {
-        return reservasFiltradas(somenteAtivas ? true : null).stream()
+    public Map<Integer, Double> horasReservadas(LocalDateTime inicio, LocalDateTime fim) {
+        return reservasFiltradas(true).stream()  // Sempre só ativas
                 .filter(r -> r.getEspaco() != null)
-                .map(r -> new AbstractMap.SimpleEntry<>(r, calcularHorasNoPeriodo(r, inicio, fim)))
-                .filter(e -> e.getValue() > 0)
+                .filter(r -> reservaNoPeriodo(r, inicio, fim))  // Só totalmente dentro
                 .collect(Collectors.groupingBy(
-                        e -> e.getKey().getEspaco().getId(),
-                        Collectors.summingDouble(Map.Entry::getValue)
+                        r -> r.getEspaco().getId(),
+                        Collectors.summingDouble(r -> Duration.between(r.getInicio(), r.getFim()).toMinutes() / 60.0)
                 ));
     }
-
 
     /* ============================================================
                       RELATÓRIOS SOBRE PAGAMENTOS

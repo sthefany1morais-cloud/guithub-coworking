@@ -26,7 +26,7 @@ public class MainCoworking extends Application {
     private EspacoService espacoService = new EspacoService(new EspacoDAO());
     private PagamentoService pagamentoService = new PagamentoService(new PagamentoDAO());
     private ReservaService reservaService = new ReservaService(new ReservaDAO(), espacoService, pagamentoService);
-    private RelatorioService relatorioService = new RelatorioService(reservaService, pagamentoService);
+    private RelatorioService relatorioService = new RelatorioService(reservaService, pagamentoService, espacoService);
     private SistemaService sistemaService = new SistemaService();  // Novo service para persistência
 
     @Override
