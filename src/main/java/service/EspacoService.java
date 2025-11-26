@@ -33,8 +33,6 @@ public class EspacoService {
         Espaco espaco = espacoDAO.buscarPorId(id);
         if (espaco == null){
             throw new EspacoInexistenteException("Espaço inexistente.");
-        } else if (!espaco.isDisponivel()) {
-            throw new EspacoIndisponivelException("Espaço indisponível");
         }
         return espaco;
     }

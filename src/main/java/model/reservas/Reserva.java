@@ -55,7 +55,9 @@ public class Reserva {
 
     private double calcularHoras(LocalDateTime inicio, LocalDateTime fim) throws DataInvalidaExeption {
 
-        if (!inicio.isBefore(fim)){
+        if (!inicio.isAfter(LocalDateTime.now())){
+            throw new DataInvalidaExeption("Não se pode fazer uma reserva no passado.");
+        } else if (!inicio.isBefore(fim)){
             throw new DataInvalidaExeption("A data inicial deve ser anterior à final.");
         }
 

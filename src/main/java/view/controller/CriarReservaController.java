@@ -6,7 +6,9 @@ import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import main.java.model.espacos.Auditorio;
 import main.java.model.espacos.Espaco;
+import main.java.model.espacos.SalaDeReuniao;
 import main.java.service.EspacoService;
 import main.java.service.ReservaService;
 import main.java.view.MainCoworking;
@@ -90,7 +92,13 @@ public class CriarReservaController {
     private void atualizarDetalhes() {
         Espaco selecionado = espacosTableView.getSelectionModel().getSelectedItem();
         if (selecionado != null) {
-            detalhesLabel.setText("Nome: " + selecionado.getNome() + " | Tipo: " + selecionado.getClass().getSimpleName() + " | Capacidade: " + selecionado.getCapacidade() + " | Preço: R$" + selecionado.getPrecoPorHora());
+            String detalhes = "Nome: " + selecionado.getNome() + " | Tipo: " + selecionado.getClass().getSimpleName() + " | Capacidade: " + selecionado.getCapacidade() + " | Preço: R$" + selecionado.getPrecoPorHora();
+            if (selecionado instanceof SalaDeReuniao) {
+                detalhes += " | Taxa Fixa: R$" + ((SalaDeReuniao) selecionado).getTaxaFixa();
+            } else if (selecionado instanceof Auditorio) {
+                detalhes += " | Custo Adicional: R$" + ((Auditorio) selecionado).getCustoAdicional();
+            }
+            detalhesLabel.setText(detalhes);
             criarReservaButton.setDisable(false);
         } else {
             detalhesLabel.setText("Selecione um espaço para ver detalhes.");
