@@ -1,11 +1,10 @@
-package main.java.util;
+package main.java.view;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import main.java.service.*;
-import main.java.view.MainCoworking;
 import main.java.view.controller.*;
 
 public class GerenciadorDeTelas {

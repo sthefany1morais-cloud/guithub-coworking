@@ -6,7 +6,6 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import main.java.dao.adaptacao.*;
 import main.java.service.*;
-import main.java.util.GerenciadorDeTelas;
 
 import java.util.Optional;
 
