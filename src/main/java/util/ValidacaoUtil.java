@@ -1,48 +1,28 @@
 package main.java.util;
 
-import main.java.execoes.EspacoJaExistenteException;
 import main.java.execoes.HoraInvalidaException;
-import main.java.execoes.ValidacaoException;
-import main.java.model.espacos.Espaco;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ValidacaoUtil {
 
     /**
-     * Valida se um nome é único entre espaços existentes e disponíveis.
-     */
-    public static void validarNomeUnico(String nome, List<Espaco> espacosExistentes) throws EspacoJaExistenteException {
-        boolean existe = espacosExistentes.stream()
-                .anyMatch(e -> e.isExistente() &&
-                        e.isDisponivel() &&
-                        e.getNome().equalsIgnoreCase(nome));
-
-        if (existe) {
-            throw new EspacoJaExistenteException(
-                    "Já existe um espaço com o nome: \"" + nome + "\"."
-            );
-        }
-    }
-
-    /**
-     * Valida se um ID é positivo.
+     * Valida se um ID é positivo (auxiliar leve).
      */
     public static boolean isIdValido(int id) {
         return id > 0;
     }
 
     /**
-     * Valida se uma string não é nula ou vazia.
+     * Valida se uma string não é nula ou vazia (auxiliar leve).
      */
     public static boolean isStringValida(String str) {
         return str != null && !str.trim().isEmpty();
     }
 
     /**
-     * Valida campos para cadastro/edição de espaços.
+     * Valida campos para cadastro/edição de espaços (auxiliar leve para UI).
      */
     public static List<String> validarCamposEspaco(String nome, String capText, String precoText, String tipo, String especificoText) {
         List<String> erros = new ArrayList<>();
@@ -59,7 +39,7 @@ public class ValidacaoUtil {
     }
 
     /**
-     * Valida formato de hora (HH:MM).
+     * Valida formato de hora (HH:MM) (auxiliar leve para UI).
      */
     public static void validarHora(String hora) throws HoraInvalidaException {
         if (!hora.matches("\\d{2}:\\d{2}")) {
@@ -69,18 +49,6 @@ public class ValidacaoUtil {
         int m = Integer.parseInt(hora.substring(3));
         if (h > 23 || m > 59) {
             throw new HoraInvalidaException("Hora inválida. Deve seguir o formato HH:MM (00:00-23:59).");
-        }
-    }
-
-    /**
-     * Valida período de datas.
-     */
-    public static void validarPeriodo(LocalDateTime inicio, LocalDateTime fim) throws ValidacaoException {
-        if (inicio == null || fim == null) {
-            throw new ValidacaoException(List.of("Datas de início e fim são obrigatórias."));
-        }
-        if (inicio.isAfter(fim)) {
-            throw new ValidacaoException(List.of("Data de início deve ser anterior à de fim."));
         }
     }
 }

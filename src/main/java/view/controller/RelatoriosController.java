@@ -12,6 +12,7 @@ import main.java.model.pagamentos.MetodoDePagamento;
 import main.java.model.reservas.Reserva;
 import main.java.service.EspacoService;
 import main.java.service.RelatorioService;
+import main.java.service.ValidacaoService;
 import main.java.util.MensagemUtil;
 import main.java.util.ValidacaoUtil;
 import main.java.view.MainCoworking;
@@ -111,7 +112,7 @@ public class RelatoriosController {
             List<String> nomesColunas = Arrays.asList("Coluna 1", "Coluna 2", "Coluna 3", "Coluna 4", "Coluna 5");
             if ("Reservas realizadas em um período".equals(tipo)) {
                 // Usar ValidacaoUtil para validar período
-                ValidacaoUtil.validarPeriodo(dataInicioPicker.getValue().atStartOfDay(), dataFimPicker.getValue().atTime(23, 59));
+                ValidacaoService.validarPeriodo(dataInicioPicker.getValue().atStartOfDay(), dataFimPicker.getValue().atTime(23, 59));
                 LocalDateTime inicio = dataInicioPicker.getValue().atStartOfDay();
                 LocalDateTime fim = dataFimPicker.getValue().atTime(23, 59);
                 Boolean ativo = ativasCheckBox.isSelected() && inativasCheckBox.isSelected() ? null : (ativasCheckBox.isSelected() ? true : false);
@@ -142,7 +143,7 @@ public class RelatoriosController {
                 resumo = "Faturamento total geral.";
             } else if ("Utilização por espaço".equals(tipo)) {
                 // Usar ValidacaoUtil para validar período
-                ValidacaoUtil.validarPeriodo(dataInicioPicker.getValue().atStartOfDay(), dataFimPicker.getValue().atTime(23, 59));
+                ValidacaoService.validarPeriodo(dataInicioPicker.getValue().atStartOfDay(), dataFimPicker.getValue().atTime(23, 59));
                 LocalDateTime inicio = dataInicioPicker.getValue().atStartOfDay();
                 LocalDateTime fim = dataFimPicker.getValue().atTime(23, 59);
                 Map<Integer, Double> utilizacao = relatorioService.horasReservadas(inicio, fim);

@@ -5,10 +5,15 @@ import main.java.model.espacos.Espaco;
 import main.java.model.espacos.SalaDeReuniao;
 import main.java.model.reservas.Reserva;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 public class FormatadorUtil {
+
+    private static final DecimalFormat DINHEIRO_FORMAT = new DecimalFormat("#,##0.00", new DecimalFormatSymbols(new Locale("pt", "BR")));
 
     /**
      * Formata um valor numérico como dinheiro brasileiro (ex.: "1234" -> "12,34").
@@ -28,7 +33,7 @@ public class FormatadorUtil {
      * Formata um valor double como dinheiro brasileiro (ex.: 1234.56 -> "1.234,56").
      */
     public static String formatarDinheiro(double valor) {
-        return String.format("%,.2f", valor).replace(".", ",").replace(",", ".");
+        return DINHEIRO_FORMAT.format(valor);
     }
 
     /**
@@ -82,3 +87,4 @@ public class FormatadorUtil {
         return tabela.toString();
     }
 }
+
