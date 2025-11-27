@@ -24,14 +24,11 @@ public class FiltroUtil {
     public static void aplicarFiltroReservas(FilteredList<Reserva> filteredList, String busca, String tipo) {
         filteredList.setPredicate(reserva -> {
             boolean matchesBusca = busca.isEmpty() || String.valueOf(reserva.getId()).contains(busca) || reserva.getEspaco().getNome().toLowerCase().contains(busca);
-            boolean matchesTipo = "Todos".equals(tipo) || reserva.getEspaco().getClass().getSimpleName().equals(tipo.replace(" ", ""));
+            boolean matchesTipo = "Todos".equals(tipo) || reserva.getEspaco().getClass().getSimpleName().equals(mapTipo(tipo));
             return matchesBusca && matchesTipo;
         });
     }
 
-    /**
-     * Mapeia tipos de espaço para nomes de classe.
-     */
     private static String mapTipo(String tipo) {
         switch (tipo) {
             case "Sala de Reunião": return "SalaDeReuniao";
