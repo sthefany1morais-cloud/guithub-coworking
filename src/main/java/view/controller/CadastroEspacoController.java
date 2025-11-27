@@ -8,7 +8,6 @@ import main.java.execoes.EspacoJaExistenteException;
 import main.java.execoes.ValidacaoException;
 import main.java.service.EspacoService;
 import main.java.util.CampoUtil;
-import main.java.util.FormatadorUtil;
 import main.java.util.MensagemUtil;
 import main.java.util.ValidacaoUtil;
 import main.java.view.MainCoworking;
@@ -44,7 +43,6 @@ public class CadastroEspacoController {
 
     public void setSistemaService(SistemaService sistemaService) {
         this.sistemaService = sistemaService;
-        // Usar CampoUtil para listeners de formatação
         CampoUtil.adicionarListenerFormatacaoDinheiro(precoField);
         CampoUtil.adicionarListenerFormatacaoDinheiro(campoEspecificoField);
     }
@@ -90,7 +88,6 @@ public class CadastroEspacoController {
             String precoText = precoField.getText().trim();
             String especificoText = campoEspecificoField.getText().trim();
 
-            // Usar ValidacaoUtil para validações
             List<String> erros = ValidacaoUtil.validarCamposEspaco(nome, capText, precoText, tipo, especificoText);
             if (!erros.isEmpty()) {
                 throw new ValidacaoException(erros);

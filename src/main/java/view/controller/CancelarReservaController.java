@@ -48,7 +48,6 @@ public class CancelarReservaController {
     private void initialize() {
         filtroTipoComboBox.setItems(FXCollections.observableArrayList("Todos", "Sala de Reunião", "Cabine Individual", "Auditório"));
         filtroTipoComboBox.setValue("Todos");
-        // Usar TabelaUtil para configurar colunas
         TabelaUtil.configurarColunasReservas(reservasTableView, idColumn, espacoColumn, tipoColumn, inicioColumn, fimColumn, valorColumn);
         buscaField.textProperty().addListener((obs, oldText, newText) -> filtrar());
         filtroTipoComboBox.setOnAction(e -> filtrar());  // Adicionado listener para o ComboBox
@@ -69,7 +68,6 @@ public class CancelarReservaController {
     private void filtrar() {
         String busca = buscaField.getText().toLowerCase();
         String tipo = filtroTipoComboBox.getValue();
-        // Usar FiltroUtil
         FiltroUtil.aplicarFiltroReservas(filteredList, busca, tipo);
     }
 

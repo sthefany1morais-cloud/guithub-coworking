@@ -7,23 +7,6 @@ import java.util.List;
 
 public class ValidacaoUtil {
 
-    /**
-     * Valida se um ID é positivo (auxiliar leve).
-     */
-    public static boolean isIdValido(int id) {
-        return id > 0;
-    }
-
-    /**
-     * Valida se uma string não é nula ou vazia (auxiliar leve).
-     */
-    public static boolean isStringValida(String str) {
-        return str != null && !str.trim().isEmpty();
-    }
-
-    /**
-     * Valida campos para cadastro/edição de espaços (auxiliar leve para UI).
-     */
     public static List<String> validarCamposEspaco(String nome, String capText, String precoText, String tipo, String especificoText) {
         List<String> erros = new ArrayList<>();
         if (nome.isEmpty()) erros.add("Nome não pode ser vazio.");
@@ -38,9 +21,6 @@ public class ValidacaoUtil {
         return erros;
     }
 
-    /**
-     * Valida formato de hora (HH:MM) (auxiliar leve para UI).
-     */
     public static void validarHora(String hora) throws HoraInvalidaException {
         if (!hora.matches("\\d{2}:\\d{2}")) {
             throw new HoraInvalidaException("Hora inválida. Deve seguir o formato HH:MM (00:00-23:59).");

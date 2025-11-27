@@ -6,9 +6,6 @@ import main.java.model.reservas.Reserva;
 
 public class FiltroUtil {
 
-    /**
-     * Aplica filtro em lista de espaços.
-     */
     public static void aplicarFiltroEspacos(FilteredList<Espaco> filteredList, String busca, String tipo, boolean somenteDisponiveis) {
         filteredList.setPredicate(espaco -> {
             boolean matchesBusca = busca.isEmpty() || String.valueOf(espaco.getId()).contains(busca) || espaco.getNome().toLowerCase().contains(busca);
@@ -18,9 +15,6 @@ public class FiltroUtil {
         });
     }
 
-    /**
-     * Aplica filtro em lista de reservas.
-     */
     public static void aplicarFiltroReservas(FilteredList<Reserva> filteredList, String busca, String tipo) {
         filteredList.setPredicate(reserva -> {
             boolean matchesBusca = busca.isEmpty() || String.valueOf(reserva.getId()).contains(busca) || reserva.getEspaco().getNome().toLowerCase().contains(busca);

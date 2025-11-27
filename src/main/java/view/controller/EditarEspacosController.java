@@ -5,13 +5,10 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import main.java.execoes.EspacoComReservasAtivasException;
-import main.java.execoes.ValidacaoException;
 import main.java.model.espacos.Espaco;
 import main.java.service.EspacoService;
 import main.java.service.ReservaService;
-import main.java.util.FiltroUtil;
 import main.java.util.MensagemUtil;
 import main.java.util.TabelaUtil;
 import main.java.util.VerificacaoUtil;
@@ -74,7 +71,6 @@ public class EditarEspacosController {
         espacosList = FXCollections.observableArrayList(espacoService.listarExistentes());
         filteredList = new FilteredList<>(espacosList, p -> true);
         espacosTableView.setItems(filteredList);
-        // Usar VerificacaoUtil
         mensagemLabel.setText(VerificacaoUtil.verificarEspacos(espacoService));
     }
 

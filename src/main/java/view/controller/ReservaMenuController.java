@@ -22,7 +22,6 @@ public class ReservaMenuController {
 
     public void setReservaService(ReservaService reservaService) {
         this.reservaService = reservaService;
-        // Usar VerificacaoUtil
         mensagemLabel.setText(VerificacaoUtil.verificarReservas(reservaService));
     }
 

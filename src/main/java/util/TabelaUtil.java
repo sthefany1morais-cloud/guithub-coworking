@@ -1,7 +1,6 @@
 package main.java.util;
 
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -13,9 +12,6 @@ import java.util.List;
 
 public class TabelaUtil {
 
-    /**
-     * Configura colunas para TableView de Espaços.
-     */
     public static void configurarColunasEspacos(TableView<Espaco> tableView,
                                                 TableColumn<Espaco, Integer> idColumn,
                                                 TableColumn<Espaco, String> nomeColumn,
@@ -33,9 +29,6 @@ public class TabelaUtil {
         disponivelColumn.setCellValueFactory(new PropertyValueFactory<>("disponivel"));
     }
 
-    /**
-     * Configura colunas para TableView de Reservas.
-     */
     public static void configurarColunasReservas(TableView<Reserva> tableView,
                                                  TableColumn<Reserva, Integer> idColumn,
                                                  TableColumn<Reserva, String> espacoColumn,
@@ -51,17 +44,6 @@ public class TabelaUtil {
         valorColumn.setCellValueFactory(new PropertyValueFactory<>("valorCalculado"));
     }
 
-    /**
-     * Carrega uma lista em um TableView.
-     */
-    public static <T> void carregarLista(TableView<T> tableView, List<T> lista) {
-        ObservableList<T> observableList = FXCollections.observableArrayList(lista);
-        tableView.setItems(observableList);
-    }
-
-    /**
-     * Configura colunas dinâmicas para relatórios (usado em RelatorioPopupController).
-     */
     public static void configurarColunasDinamicas(TableView<ObservableList<String>> tableView,
                                                   List<TableColumn<ObservableList<String>, String>> colunas,
                                                   List<String> nomesColunas) {

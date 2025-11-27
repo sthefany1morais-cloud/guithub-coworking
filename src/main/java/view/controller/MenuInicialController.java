@@ -29,7 +29,6 @@ public class MenuInicialController {
         this.espacoService = espacoService;
         this.reservaService = reservaService;
         this.relatorioService = relatorioService;
-        // Usar VerificacaoUtil
         mensagemLabel.setText(VerificacaoUtil.verificarEstadoDados(espacoService, reservaService));
     }
 

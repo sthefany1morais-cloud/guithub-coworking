@@ -7,14 +7,11 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import main.java.execoes.ValidacaoException;
-import main.java.model.espacos.Espaco;
-import main.java.model.pagamentos.MetodoDePagamento;
 import main.java.model.reservas.Reserva;
 import main.java.service.EspacoService;
 import main.java.service.RelatorioService;
 import main.java.service.ValidacaoService;
 import main.java.util.MensagemUtil;
-import main.java.util.ValidacaoUtil;
 import main.java.view.MainCoworking;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
@@ -111,7 +108,6 @@ public class RelatoriosController {
             String resumo = "";
             List<String> nomesColunas = Arrays.asList("Coluna 1", "Coluna 2", "Coluna 3", "Coluna 4", "Coluna 5");
             if ("Reservas realizadas em um período".equals(tipo)) {
-                // Usar ValidacaoUtil para validar período
                 ValidacaoService.validarPeriodo(dataInicioPicker.getValue().atStartOfDay(), dataFimPicker.getValue().atTime(23, 59));
                 LocalDateTime inicio = dataInicioPicker.getValue().atStartOfDay();
                 LocalDateTime fim = dataFimPicker.getValue().atTime(23, 59);
@@ -142,7 +138,6 @@ public class RelatoriosController {
                 }
                 resumo = "Faturamento total geral.";
             } else if ("Utilização por espaço".equals(tipo)) {
-                // Usar ValidacaoUtil para validar período
                 ValidacaoService.validarPeriodo(dataInicioPicker.getValue().atStartOfDay(), dataFimPicker.getValue().atTime(23, 59));
                 LocalDateTime inicio = dataInicioPicker.getValue().atStartOfDay();
                 LocalDateTime fim = dataFimPicker.getValue().atTime(23, 59);

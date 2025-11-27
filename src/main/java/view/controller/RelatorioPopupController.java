@@ -1,6 +1,5 @@
 package main.java.view.controller;
 
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -37,7 +36,6 @@ public class RelatorioPopupController {
             MensagemUtil.definirErro(mensagemLabel, "Nenhum dado encontrado para o relatório.");
             relatorioPopupTableView.setItems(FXCollections.emptyObservableList());
         } else {
-            // Usar TabelaUtil
             TabelaUtil.configurarColunasDinamicas(relatorioPopupTableView, List.of(coluna1, coluna2, coluna3, coluna4, coluna5), nomesColunas);
             relatorioPopupTableView.setItems(dados);
             MensagemUtil.limparMensagens(mensagemLabel);

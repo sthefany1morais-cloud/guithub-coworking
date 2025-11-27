@@ -62,7 +62,6 @@ public class DetalhesReservaController {
         projetorLabel.setVisible(espacoSelecionado instanceof SalaDeReuniao);
         dataInicioPicker.setEditable(false);
         dataFimPicker.setEditable(false);
-        // Usar CampoUtil
         CampoUtil.configurarCampoHora(horaInicioField);
         CampoUtil.configurarCampoHora(horaFimField);
         dataInicioPicker.setOnAction(e -> calcularCusto());
@@ -91,7 +90,6 @@ public class DetalhesReservaController {
             LocalDateTime inicio = LocalDateTime.of(dataInicioPicker.getValue(), LocalTime.parse(horaInicioField.getText()));
             LocalDateTime fim = LocalDateTime.of(dataFimPicker.getValue(), LocalTime.parse(horaFimField.getText()));
             boolean projetor = projetorCheckBox.isSelected();
-            // Usar CalculoReservaUtil
             double custo = CalculoReservaUtil.calcularCustoParaView(espacoSelecionado, inicio, fim, projetor);
             custoLabel.setText("Custo: R$" + FormatadorUtil.formatarDinheiro(custo));
         } catch (Exception e) {
@@ -104,7 +102,6 @@ public class DetalhesReservaController {
         try {
             String horaInicio = horaInicioField.getText();
             String horaFim = horaFimField.getText();
-            // Usar ValidacaoUtil
             ValidacaoUtil.validarHora(horaInicio);
             ValidacaoUtil.validarHora(horaFim);
             int hInicio = Integer.parseInt(horaInicio.substring(0, 2));

@@ -50,7 +50,6 @@ public class EditarEspacoDetalhesController {
             carregarDados();
         }
         if (sistemaService != null) {
-            // Usar CampoUtil para listeners
             CampoUtil.adicionarListenerFormatacaoDinheiro(precoField);
             CampoUtil.adicionarListenerFormatacaoDinheiro(campoEspecificoField);
         }

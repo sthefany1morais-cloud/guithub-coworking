@@ -22,7 +22,6 @@ public class MenuEspacosController {
 
     public void setEspacoService(EspacoService espacoService) {
         this.espacoService = espacoService;
-        // Usar VerificacaoUtil
         mensagemLabel.setText(VerificacaoUtil.verificarEspacos(espacoService));
     }
 

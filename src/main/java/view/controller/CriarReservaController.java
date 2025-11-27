@@ -5,12 +5,8 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import main.java.model.espacos.Auditorio;
 import main.java.model.espacos.Espaco;
-import main.java.model.espacos.SalaDeReuniao;
 import main.java.service.EspacoService;
-import main.java.service.ReservaService;
 import main.java.util.FiltroUtil;
 import main.java.util.FormatadorUtil;
 import main.java.util.MensagemUtil;
@@ -34,7 +30,6 @@ public class CriarReservaController {
 
     private MainCoworking mainApp;
     private EspacoService espacoService;
-    private ReservaService reservaService;
     private ObservableList<Espaco> espacosList;
     private FilteredList<Espaco> filteredList;
 
@@ -42,9 +37,8 @@ public class CriarReservaController {
         this.mainApp = mainApp;
     }
 
-    public void setServices(EspacoService espacoService, ReservaService reservaService) {
+    public void setServices(EspacoService espacoService) {
         this.espacoService = espacoService;
-        this.reservaService = reservaService;
         carregarEspacos();
     }
 
@@ -52,7 +46,6 @@ public class CriarReservaController {
     private void initialize() {
         filtroTipoComboBox.setItems(FXCollections.observableArrayList("Todos", "Sala de Reunião", "Cabine Individual", "Auditório"));
         filtroTipoComboBox.setValue("Todos");
-        // Usar TabelaUtil
         TabelaUtil.configurarColunasEspacos(espacosTableView, idColumn, nomeColumn, tipoColumn, capacidadeColumn, null, disponivelColumn);
         buscaField.textProperty().addListener((obs, oldText, newText) -> filtrar());
         filtroTipoComboBox.setOnAction(e -> filtrar());
@@ -79,14 +72,12 @@ public class CriarReservaController {
         String busca = buscaField.getText().toLowerCase();
         String tipo = filtroTipoComboBox.getValue();
         boolean somenteDisponiveis = disponiveisCheckBox.isSelected();
-        // Usar FiltroUtil
         FiltroUtil.aplicarFiltroEspacos(filteredList, busca, tipo, somenteDisponiveis);
     }
 
     private void atualizarDetalhes() {
         Espaco selecionado = espacosTableView.getSelectionModel().getSelectedItem();
         if (selecionado != null) {
-            // Usar FormatadorUtil
             detalhesLabel.setText(FormatadorUtil.formatarDetalhesEspaco(selecionado));
             criarReservaButton.setDisable(false);
         } else {

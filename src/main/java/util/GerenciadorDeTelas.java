@@ -64,9 +64,6 @@ public class GerenciadorDeTelas {
         alert.showAndWait();
     }
 
-    /**
-     * Injeção centralizada dos controllers
-     */
     private void injetarDependencias(Object controller) {
 
         if (controller instanceof TelaInicialController c) {
@@ -101,7 +98,7 @@ public class GerenciadorDeTelas {
 
         } else if (controller instanceof CriarReservaController c) {
             c.setMainApp(mainApp);
-            c.setServices(espacoService, reservaService);
+            c.setServices(espacoService);
 
         } else if (controller instanceof DetalhesReservaController c) {
             c.setMainApp(mainApp);
