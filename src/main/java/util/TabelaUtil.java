@@ -27,7 +27,9 @@ public class TabelaUtil {
         nomeColumn.setCellValueFactory(new PropertyValueFactory<>("nome"));
         tipoColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getClass().getSimpleName()));
         capacidadeColumn.setCellValueFactory(new PropertyValueFactory<>("capacidade"));
-        precoColumn.setCellValueFactory(new PropertyValueFactory<>("precoPorHora"));
+        if (precoColumn != null) {
+            precoColumn.setCellValueFactory(new PropertyValueFactory<>("precoPorHora"));
+        }
         disponivelColumn.setCellValueFactory(new PropertyValueFactory<>("disponivel"));
     }
 
@@ -70,3 +72,4 @@ public class TabelaUtil {
         }
     }
 }
+

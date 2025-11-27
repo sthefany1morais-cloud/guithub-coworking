@@ -10,6 +10,10 @@ import main.java.execoes.ReservaInativaException;
 import main.java.execoes.ReservaInexistenteException;
 import main.java.model.reservas.Reserva;
 import main.java.service.ReservaService;
+import main.java.util.FiltroUtil;
+import main.java.util.FormatadorUtil;
+import main.java.util.MensagemUtil;
+import main.java.util.TabelaUtil;
 import main.java.view.MainCoworking;
 
 public class CancelarReservaController {
@@ -44,12 +48,8 @@ public class CancelarReservaController {
     private void initialize() {
         filtroTipoComboBox.setItems(FXCollections.observableArrayList("Todos", "Sala de Reunião", "Cabine Individual", "Auditório"));
         filtroTipoComboBox.setValue("Todos");
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        espacoColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getEspaco().getNome()));
-        tipoColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getEspaco().getClass().getSimpleName()));
-        inicioColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getInicio().toString()));
-        fimColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getFim().toString()));
-        valorColumn.setCellValueFactory(new PropertyValueFactory<>("valorCalculado"));
+        // Usar TabelaUtil para configurar colunas
+        TabelaUtil.configurarColunasReservas(reservasTableView, idColumn, espacoColumn, tipoColumn, inicioColumn, fimColumn, valorColumn);
         buscaField.textProperty().addListener((obs, oldText, newText) -> filtrar());
         cancelarButton.disableProperty().bind(reservasTableView.getSelectionModel().selectedItemProperty().isNull());
     }
@@ -59,21 +59,17 @@ public class CancelarReservaController {
         filteredList = new FilteredList<>(reservasList, p -> true);
         reservasTableView.setItems(filteredList);
         if (reservasList.isEmpty()) {
-            mensagemLabel.setText("Nenhuma reserva ativa encontrada.");
+            MensagemUtil.definirErro(mensagemLabel, "Nenhuma reserva ativa encontrada.");
         } else {
-            mensagemLabel.setText("");
+            MensagemUtil.limparMensagens(mensagemLabel);
         }
     }
 
     private void filtrar() {
         String busca = buscaField.getText().toLowerCase();
         String tipo = filtroTipoComboBox.getValue();
-
-        filteredList.setPredicate(reserva -> {
-            boolean matchesBusca = busca.isEmpty() || String.valueOf(reserva.getId()).contains(busca) || reserva.getEspaco().getNome().toLowerCase().contains(busca);
-            boolean matchesTipo = "Todos".equals(tipo) || reserva.getEspaco().getClass().getSimpleName().equals(tipo.replace(" ", ""));
-            return matchesBusca && matchesTipo;
-        });
+        // Usar FiltroUtil
+        FiltroUtil.aplicarFiltroReservas(filteredList, busca, tipo);
     }
 
     @FXML
@@ -82,14 +78,13 @@ public class CancelarReservaController {
         if (selecionada != null) {
             try {
                 double reembolso = reservaService.cancelarReserva(selecionada.getId());
-                mensagemLabel.setText("");
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Reserva cancelada! Reembolso: R$" + String.format("%.2f", reembolso));
-                alert.showAndWait();
+                MensagemUtil.limparMensagens(mensagemLabel);
+                MensagemUtil.mostrarAlertaInformacao("Sucesso", "Reserva cancelada! " + FormatadorUtil.formatarDinheiro(reembolso));
                 carregarReservas();
             } catch (ReservaInexistenteException | ReservaInativaException e) {
-                mensagemLabel.setText("Erro: " + e.getMessage());
+                MensagemUtil.definirErro(mensagemLabel, "Erro: " + e.getMessage());
             } catch (Exception e) {
-                mensagemLabel.setText("Erro inesperado: " + e.getMessage());
+                MensagemUtil.definirErro(mensagemLabel, "Erro inesperado: " + e.getMessage());
             }
         }
     }

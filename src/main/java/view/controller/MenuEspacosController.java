@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import main.java.service.EspacoService;
+import main.java.util.VerificacaoUtil;
 import main.java.view.MainCoworking;
 
 public class MenuEspacosController {
@@ -21,15 +22,8 @@ public class MenuEspacosController {
 
     public void setEspacoService(EspacoService espacoService) {
         this.espacoService = espacoService;
-        verificarEspacos();
-    }
-
-    private void verificarEspacos() {
-        if (espacoService.listarTodos().isEmpty()) {
-            mensagemLabel.setText("Nenhum espaço encontrado. Crie um novo espaço primeiro.");
-        } else {
-            mensagemLabel.setText("");
-        }
+        // Usar VerificacaoUtil
+        mensagemLabel.setText(VerificacaoUtil.verificarEspacos(espacoService));
     }
 
     @FXML

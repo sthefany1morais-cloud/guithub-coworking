@@ -9,16 +9,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import main.java.execoes.EspacoComReservasAtivasException;
 import main.java.execoes.ValidacaoException;
 import main.java.model.espacos.Espaco;
-import main.java.model.pagamentos.MetodoDePagamento;
-import main.java.model.reservas.Reserva;
 import main.java.service.EspacoService;
 import main.java.service.ReservaService;
+import main.java.util.FiltroUtil;
+import main.java.util.MensagemUtil;
+import main.java.util.TabelaUtil;
+import main.java.util.VerificacaoUtil;
 import main.java.view.MainCoworking;
-import javafx.beans.binding.BooleanBinding;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 
 public class EditarEspacosController {
     @FXML private ComboBox<String> filtroTipoComboBox;
@@ -40,7 +37,7 @@ public class EditarEspacosController {
 
     private MainCoworking mainApp;
     private EspacoService espacoService;
-    private ReservaService reservaService;  // Adicionado
+    private ReservaService reservaService;
     private ObservableList<Espaco> espacosList;
     private FilteredList<Espaco> filteredList;
 
@@ -53,7 +50,7 @@ public class EditarEspacosController {
         carregarEspacos();
     }
 
-    public void setReservaService(ReservaService reservaService) {  // Adicionado
+    public void setReservaService(ReservaService reservaService) {
         this.reservaService = reservaService;
     }
 
@@ -61,13 +58,8 @@ public class EditarEspacosController {
     private void initialize() {
         filtroTipoComboBox.setItems(FXCollections.observableArrayList("Todos", "Sala de Reunião", "Cabine Individual", "Auditório"));
         filtroTipoComboBox.setValue("Todos");
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        nomeColumn.setCellValueFactory(new PropertyValueFactory<>("nome"));
-        tipoColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getClass().getSimpleName()));
-        capacidadeColumn.setCellValueFactory(new PropertyValueFactory<>("capacidade"));
-        precoColumn.setCellValueFactory(new PropertyValueFactory<>("precoPorHora"));
-        disponivelColumn.setCellValueFactory(new PropertyValueFactory<>("disponivel"));
-        // Adicionar listeners para todos os filtros
+        // Usar TabelaUtil
+        TabelaUtil.configurarColunasEspacos(espacosTableView, idColumn, nomeColumn, tipoColumn, capacidadeColumn, precoColumn, disponivelColumn);
         buscaField.textProperty().addListener((obs, oldText, newText) -> filtrar());
         filtroTipoComboBox.setOnAction(e -> filtrar());
         disponiveisCheckBox.setOnAction(e -> filtrar());
@@ -79,14 +71,11 @@ public class EditarEspacosController {
     }
 
     private void carregarEspacos() {
-        espacosList = FXCollections.observableArrayList(espacoService.listarExistentes());  // Lista apenas existentes
+        espacosList = FXCollections.observableArrayList(espacoService.listarExistentes());
         filteredList = new FilteredList<>(espacosList, p -> true);
         espacosTableView.setItems(filteredList);
-        if (espacosList.isEmpty()) {
-            mensagemLabel.setText("Nenhum espaço encontrado. Crie um novo espaço primeiro.");
-        } else {
-            mensagemLabel.setText("");
-        }
+        // Usar VerificacaoUtil
+        mensagemLabel.setText(VerificacaoUtil.verificarEspacos(espacoService));
     }
 
     private void filtrar() {
@@ -127,15 +116,12 @@ public class EditarEspacosController {
             try {
                 boolean possuiReservas = reservaService.possuiReservasAtivas(selecionado);
                 espacoService.removerEspaco(selecionado.getId(), possuiReservas);
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Espaço removido!");
-                alert.showAndWait();
+                MensagemUtil.mostrarAlertaInformacao("Sucesso", "Espaço removido!");
                 carregarEspacos();
             } catch (EspacoComReservasAtivasException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Erro: " + e.getMessage());
-                alert.showAndWait();
+                MensagemUtil.mostrarAlertaErro("Erro", "Erro: " + e.getMessage());
             } catch (Exception e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Erro inesperado: " + e.getMessage());
-                alert.showAndWait();
+                MensagemUtil.mostrarAlertaErro("Erro", "Erro inesperado: " + e.getMessage());
             }
         }
     }

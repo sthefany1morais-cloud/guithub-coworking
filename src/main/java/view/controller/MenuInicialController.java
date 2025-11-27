@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 import main.java.service.EspacoService;
 import main.java.service.RelatorioService;
 import main.java.service.ReservaService;
+import main.java.util.VerificacaoUtil;
 import main.java.view.MainCoworking;
 
 public class MenuInicialController {
@@ -28,17 +29,8 @@ public class MenuInicialController {
         this.espacoService = espacoService;
         this.reservaService = reservaService;
         this.relatorioService = relatorioService;
-        verificarDados();  // Verificar se há dados ao carregar
-    }
-
-    private void verificarDados() {
-        if (espacoService.listarTodos().isEmpty()) {
-            mensagemLabel.setText("Nenhum espaço cadastrado. Comece criando espaços.");
-        } else if (reservaService.listarTodos().isEmpty()) {
-            mensagemLabel.setText("Nenhuma reserva encontrada. Crie reservas.");
-        } else {
-            mensagemLabel.setText("");
-        }
+        // Usar VerificacaoUtil
+        mensagemLabel.setText(VerificacaoUtil.verificarEstadoDados(espacoService, reservaService));
     }
 
     @FXML

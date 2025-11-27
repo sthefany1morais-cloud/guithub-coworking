@@ -28,7 +28,7 @@ public class FormatadorUtil {
      * Formata um valor double como dinheiro brasileiro (ex.: 1234.56 -> "1.234,56").
      */
     public static String formatarDinheiro(double valor) {
-        return String.format("%,.2f", valor).replace(".", ",").replace(",", ".", 1);
+        return String.format("%,.2f", valor).replace(".", ",").replace(",", ".");
     }
 
     /**

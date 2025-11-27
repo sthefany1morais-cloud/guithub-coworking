@@ -7,11 +7,11 @@ import main.java.model.espacos.Auditorio;
 import main.java.model.espacos.Espaco;
 import main.java.model.espacos.SalaDeReuniao;
 import main.java.service.EspacoService;
+import main.java.util.CampoUtil;
+import main.java.util.FormatadorUtil;
+import main.java.util.MensagemUtil;
 import main.java.view.MainCoworking;
 import main.java.service.SistemaService;
-import javafx.beans.value.ChangeListener;
-
-import java.util.function.UnaryOperator;
 
 public class EditarEspacoDetalhesController {
 
@@ -31,8 +31,6 @@ public class EditarEspacoDetalhesController {
     private MainCoworking mainApp;
     private EspacoService espacoService;
     private boolean isLoading = false;
-    private ChangeListener<String> precoListener;
-    private ChangeListener<String> campoEspecificoListener;
 
     public static void setEspacoSelecionado(Espaco espaco) {
         espacoSelecionado = espaco;
@@ -52,42 +50,33 @@ public class EditarEspacoDetalhesController {
             carregarDados();
         }
         if (sistemaService != null) {
-            precoListener = (obs, oldText, newText) -> {
-                if (!isLoading && !newText.equals(sistemaService.formatarDinheiro(newText))) {
-                    precoField.setText(sistemaService.formatarDinheiro(newText));
-                }
-            };
-            campoEspecificoListener = (obs, oldText, newText) -> {
-                if (!isLoading && !newText.equals(sistemaService.formatarDinheiro(newText))) {
-                    campoEspecificoField.setText(sistemaService.formatarDinheiro(newText));
-                }
-            };
-            precoField.textProperty().addListener(precoListener);
-            campoEspecificoField.textProperty().addListener(campoEspecificoListener);
+            // Usar CampoUtil para listeners
+            CampoUtil.adicionarListenerFormatacaoDinheiro(precoField);
+            CampoUtil.adicionarListenerFormatacaoDinheiro(campoEspecificoField);
         }
     }
 
     private void carregarDados() {
-        isLoading = true;  // Ignora listener
+        isLoading = true;
         nomeField.setPromptText(espacoSelecionado.getNome());
         capacidadeField.setPromptText(String.valueOf(espacoSelecionado.getCapacidade()));
-        precoField.setText(String.format("%.2f", espacoSelecionado.getPrecoPorHora()).replace(".", ","));  // Mostra 70.0 -> 70,00
+        precoField.setText(FormatadorUtil.formatarDinheiro(espacoSelecionado.getPrecoPorHora()));
         if (espacoSelecionado instanceof SalaDeReuniao) {
             campoEspecificoLabel.setText("Taxa Fixa:");
             campoEspecificoLabel.setVisible(true);
-            campoEspecificoField.setText(String.format("%.2f", ((SalaDeReuniao) espacoSelecionado).getTaxaFixa()).replace(".", ","));
+            campoEspecificoField.setText(FormatadorUtil.formatarDinheiro(((SalaDeReuniao) espacoSelecionado).getTaxaFixa()));
             campoEspecificoField.setVisible(true);
         } else if (espacoSelecionado instanceof Auditorio) {
             campoEspecificoLabel.setText("Custo Adicional:");
             campoEspecificoLabel.setVisible(true);
-            campoEspecificoField.setText(String.format("%.2f", ((Auditorio) espacoSelecionado).getCustoAdicional()).replace(".", ","));
+            campoEspecificoField.setText(FormatadorUtil.formatarDinheiro(((Auditorio) espacoSelecionado).getCustoAdicional()));
             campoEspecificoField.setVisible(true);
         } else {
             campoEspecificoLabel.setVisible(false);
             campoEspecificoField.setVisible(false);
         }
         disponivelCheckBox.setSelected(espacoSelecionado.isDisponivel());
-        isLoading = false;  // Reabilita listener
+        isLoading = false;
     }
 
     @FXML
@@ -99,7 +88,6 @@ public class EditarEspacoDetalhesController {
             String precoText = precoField.getText().trim();
             double preco = precoText.isEmpty() || "0,00".equals(precoText) ? espacoSelecionado.getPrecoPorHora() : Double.parseDouble(precoText.replace(",", "."));
             boolean disponivel = disponivelCheckBox.isSelected();
-            // Validações só se preenchido
             if (!capText.isEmpty() && capacidade <= 0) throw new CapacidadeInvalidaException("Capacidade deve ser maior que 0.");
             if (!precoText.isEmpty() && !precoText.equals("0,00") && preco <= 0) throw new PrecoPorHoraInvalidoException("Preço deve ser maior que 0.");
 
@@ -116,28 +104,20 @@ public class EditarEspacoDetalhesController {
             } else {
                 espacoService.atualizarCabineIndividual(espacoSelecionado.getId(), nome, capacidade, preco, disponivel);
             }
-            errosLabel.setText("");
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Espaço atualizado com sucesso!");
-            alert.showAndWait();
+            MensagemUtil.limparMensagens(errosLabel);
+            MensagemUtil.mostrarAlertaInformacao("Sucesso", "Espaço atualizado com sucesso!");
             voltar();
-
         } catch (CapacidadeInvalidaException | PrecoPorHoraInvalidoException | EspacoJaExistenteException |
                  TaxaFixaInvalidaException | CustoAdicionalInvalidoException e) {
-            errosLabel.setText("Erro: " + e.getMessage());
+            MensagemUtil.definirErro(errosLabel, "Erro: " + e.getMessage());
         } catch (Exception e) {
-            errosLabel.setText("Erro inesperado: " + e.getMessage());
+            MensagemUtil.definirErro(errosLabel, "Erro inesperado: " + e.getMessage());
         }
-
     }
 
     @FXML
     private void initialize() {
-        UnaryOperator<TextFormatter.Change> intFilter = change -> {
-            String newText = change.getControlNewText();
-            return newText.matches("\\d*") ? change : null;
-        };
-        capacidadeField.setTextFormatter(new TextFormatter<>(intFilter));
-        // Listeners movidos para setSistemaService()
+        CampoUtil.configurarCampoInteiro(capacidadeField);
     }
 
     @FXML

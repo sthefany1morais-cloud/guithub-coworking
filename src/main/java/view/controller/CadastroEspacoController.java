@@ -7,12 +7,14 @@ import javafx.scene.control.*;
 import main.java.execoes.EspacoJaExistenteException;
 import main.java.execoes.ValidacaoException;
 import main.java.service.EspacoService;
+import main.java.util.CampoUtil;
+import main.java.util.FormatadorUtil;
+import main.java.util.MensagemUtil;
+import main.java.util.ValidacaoUtil;
 import main.java.view.MainCoworking;
 import main.java.service.SistemaService;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.UnaryOperator;
 
 public class CadastroEspacoController {
 
@@ -42,29 +44,16 @@ public class CadastroEspacoController {
 
     public void setSistemaService(SistemaService sistemaService) {
         this.sistemaService = sistemaService;
-        // Adicionar listeners aqui
-        precoField.textProperty().addListener((obs, oldText, newText) -> {
-            if (!newText.equals(sistemaService.formatarDinheiro(newText))) {
-                precoField.setText(sistemaService.formatarDinheiro(newText));
-            }
-        });
-        campoEspecificoField.textProperty().addListener((obs, oldText, newText) -> {
-            if (!newText.equals(sistemaService.formatarDinheiro(newText))) {
-                campoEspecificoField.setText(sistemaService.formatarDinheiro(newText));
-            }
-        });
+        // Usar CampoUtil para listeners de formatação
+        CampoUtil.adicionarListenerFormatacaoDinheiro(precoField);
+        CampoUtil.adicionarListenerFormatacaoDinheiro(campoEspecificoField);
     }
 
     @FXML
     private void initialize() {
         tipoComboBox.setItems(FXCollections.observableArrayList("Sala de Reunião", "Cabine Individual", "Auditório"));
         tipoComboBox.setOnAction(e -> atualizarCamposEspecificos());
-        UnaryOperator<TextFormatter.Change> intFilter = change -> {
-            String newText = change.getControlNewText();
-            return newText.matches("\\d*") ? change : null;
-        };
-        capacidadeField.setTextFormatter(new TextFormatter<>(intFilter));
-        // Inicializa campos de dinheiro com 0,00
+        CampoUtil.configurarCampoInteiro(capacidadeField);  // Usar CampoUtil
         precoField.setText("0,00");
         campoEspecificoField.setText("0,00");
 
@@ -94,7 +83,6 @@ public class CadastroEspacoController {
 
     @FXML
     private void salvar() {
-        List<String> erros = new ArrayList<>();
         try {
             String tipo = tipoComboBox.getValue();
             String nome = nomeField.getText().trim();
@@ -102,17 +90,8 @@ public class CadastroEspacoController {
             String precoText = precoField.getText().trim();
             String especificoText = campoEspecificoField.getText().trim();
 
-            // Validações para múltiplos erros
-            if (nome.isEmpty()) erros.add("Nome não pode ser vazio.");
-            if (capText.isEmpty() || !capText.matches("\\d+")) erros.add("Capacidade deve ser um número positivo.");
-            else if (Integer.parseInt(capText) <= 0) erros.add("Capacidade não pode ser zero ou negativa.");
-            if (precoText.isEmpty() || !precoText.matches("\\d+\\,?\\d*")) erros.add("Preço por hora deve ser um número positivo.");
-            else if (Double.parseDouble(precoText.replace(",", ".")) <= 0) erros.add("Preço por hora não pode ser zero ou negativo.");
-            if ("Sala de Reunião".equals(tipo) && (especificoText.isEmpty() || !especificoText.matches("\\d+\\,?\\d*"))) erros.add("Taxa fixa deve ser um número positivo.");
-            else if ("Sala de Reunião".equals(tipo) && Double.parseDouble(especificoText.replace(",", ".")) <= 0) erros.add("Taxa fixa não pode ser zero ou negativa.");
-            if ("Auditório".equals(tipo) && (especificoText.isEmpty() || !especificoText.matches("\\d+\\,?\\d*"))) erros.add("Custo adicional deve ser um número positivo.");
-            else if ("Auditório".equals(tipo) && Double.parseDouble(especificoText.replace(",", ".")) <= 0) erros.add("Custo adicional não pode ser zero ou negativa.");
-
+            // Usar ValidacaoUtil para validações
+            List<String> erros = ValidacaoUtil.validarCamposEspaco(nome, capText, precoText, tipo, especificoText);
             if (!erros.isEmpty()) {
                 throw new ValidacaoException(erros);
             }
@@ -128,16 +107,15 @@ public class CadastroEspacoController {
                 double custo = Double.parseDouble(especificoText.replace(",", "."));
                 espacoService.cadastrarAuditorio(nome, capacidade, preco, custo);
             }
-            errosLabel.setText("");
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Espaço criado com sucesso!");
-            alert.showAndWait();
+            MensagemUtil.limparMensagens(errosLabel);
+            MensagemUtil.mostrarAlertaInformacao("Sucesso", "Espaço criado com sucesso!");
             limpar();
         } catch (ValidacaoException e) {
-            errosLabel.setText("Erros encontrados:\n" + String.join("\n", e.getErros()));
+            MensagemUtil.definirErro(errosLabel, "Erros encontrados:\n" + String.join("\n", e.getErros()));
         } catch (EspacoJaExistenteException e) {
-            errosLabel.setText("Erro: " + e.getMessage());
+            MensagemUtil.definirErro(errosLabel, "Erro: " + e.getMessage());
         } catch (Exception e) {
-            errosLabel.setText("Erro inesperado: " + e.getMessage());
+            MensagemUtil.definirErro(errosLabel, "Erro inesperado: " + e.getMessage());
         }
     }
 
@@ -148,7 +126,6 @@ public class CadastroEspacoController {
         precoField.clear();
         campoEspecificoField.clear();
     }
-
 
     @FXML
     private void voltar() {

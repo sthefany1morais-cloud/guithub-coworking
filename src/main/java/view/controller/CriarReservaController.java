@@ -11,6 +11,10 @@ import main.java.model.espacos.Espaco;
 import main.java.model.espacos.SalaDeReuniao;
 import main.java.service.EspacoService;
 import main.java.service.ReservaService;
+import main.java.util.FiltroUtil;
+import main.java.util.FormatadorUtil;
+import main.java.util.MensagemUtil;
+import main.java.util.TabelaUtil;
 import main.java.view.MainCoworking;
 
 public class CriarReservaController {
@@ -48,13 +52,8 @@ public class CriarReservaController {
     private void initialize() {
         filtroTipoComboBox.setItems(FXCollections.observableArrayList("Todos", "Sala de Reunião", "Cabine Individual", "Auditório"));
         filtroTipoComboBox.setValue("Todos");
-
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        nomeColumn.setCellValueFactory(new PropertyValueFactory<>("nome"));
-        tipoColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getClass().getSimpleName()));
-        capacidadeColumn.setCellValueFactory(new PropertyValueFactory<>("capacidade"));
-        disponivelColumn.setCellValueFactory(new PropertyValueFactory<>("disponivel"));
-
+        // Usar TabelaUtil
+        TabelaUtil.configurarColunasEspacos(espacosTableView, idColumn, nomeColumn, tipoColumn, capacidadeColumn, null, disponivelColumn);
         buscaField.textProperty().addListener((obs, oldText, newText) -> filtrar());
         filtroTipoComboBox.setOnAction(e -> filtrar());
         disponiveisCheckBox.setOnAction(e -> filtrar());
@@ -62,17 +61,17 @@ public class CriarReservaController {
     }
 
     private void carregarEspacos() {
-        espacosList = FXCollections.observableArrayList(espacoService.listarExistentes());  // Apenas existentes
+        espacosList = FXCollections.observableArrayList(espacoService.listarExistentes());
         filteredList = new FilteredList<>(espacosList, p -> true);
         espacosTableView.setItems(filteredList);
         if (espacosList.isEmpty()) {
-            detalhesLabel.setText("Nenhum espaço disponível. Crie um espaço primeiro.");
+            MensagemUtil.definirErro(detalhesLabel, "Nenhum espaço disponível. Crie um espaço primeiro.");
             criarReservaButton.setDisable(true);
-            mensagemLabel.setText("Nenhum espaço encontrado. Crie um novo espaço primeiro.");
+            MensagemUtil.definirErro(mensagemLabel, "Nenhum espaço encontrado. Crie um novo espaço primeiro.");
         } else {
-            detalhesLabel.setText("Selecione um espaço para ver detalhes.");
+            MensagemUtil.definirErro(detalhesLabel, "Selecione um espaço para ver detalhes.");
             criarReservaButton.setDisable(true);
-            mensagemLabel.setText("");
+            MensagemUtil.limparMensagens(mensagemLabel);
         }
     }
 
@@ -80,28 +79,18 @@ public class CriarReservaController {
         String busca = buscaField.getText().toLowerCase();
         String tipo = filtroTipoComboBox.getValue();
         boolean somenteDisponiveis = disponiveisCheckBox.isSelected();
-
-        filteredList.setPredicate(espaco -> {
-            boolean matchesBusca = busca.isEmpty() || String.valueOf(espaco.getId()).contains(busca) || espaco.getNome().toLowerCase().contains(busca);
-            boolean matchesTipo = "Todos".equals(tipo) || espaco.getClass().getSimpleName().equals(tipo.replace(" ", ""));
-            boolean matchesDisponivel = !somenteDisponiveis || espaco.isDisponivel();
-            return matchesBusca && matchesTipo && matchesDisponivel;
-        });
+        // Usar FiltroUtil
+        FiltroUtil.aplicarFiltroEspacos(filteredList, busca, tipo, somenteDisponiveis);
     }
 
     private void atualizarDetalhes() {
         Espaco selecionado = espacosTableView.getSelectionModel().getSelectedItem();
         if (selecionado != null) {
-            String detalhes = "Nome: " + selecionado.getNome() + " | Tipo: " + selecionado.getClass().getSimpleName() + " | Capacidade: " + selecionado.getCapacidade() + " | Preço: R$" + selecionado.getPrecoPorHora();
-            if (selecionado instanceof SalaDeReuniao) {
-                detalhes += " | Taxa Fixa: R$" + ((SalaDeReuniao) selecionado).getTaxaFixa();
-            } else if (selecionado instanceof Auditorio) {
-                detalhes += " | Custo Adicional: R$" + ((Auditorio) selecionado).getCustoAdicional();
-            }
-            detalhesLabel.setText(detalhes);
+            // Usar FormatadorUtil
+            detalhesLabel.setText(FormatadorUtil.formatarDetalhesEspaco(selecionado));
             criarReservaButton.setDisable(false);
         } else {
-            detalhesLabel.setText("Selecione um espaço para ver detalhes.");
+            MensagemUtil.definirErro(detalhesLabel, "Selecione um espaço para ver detalhes.");
             criarReservaButton.setDisable(true);
         }
     }
@@ -111,8 +100,7 @@ public class CriarReservaController {
         Espaco selecionado = espacosTableView.getSelectionModel().getSelectedItem();
         if (selecionado != null) {
             if (!selecionado.isDisponivel()) {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Espaço indisponível para reserva.");
-                alert.showAndWait();
+                MensagemUtil.mostrarAlertaErro("Erro", "Espaço indisponível para reserva.");
                 return;
             }
             DetalhesReservaController.setEspacoSelecionado(selecionado);

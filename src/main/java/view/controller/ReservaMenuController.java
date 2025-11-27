@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import main.java.service.ReservaService;
+import main.java.util.VerificacaoUtil;
 import main.java.view.MainCoworking;
 
 public class ReservaMenuController {
@@ -21,15 +22,8 @@ public class ReservaMenuController {
 
     public void setReservaService(ReservaService reservaService) {
         this.reservaService = reservaService;
-        verificarReservas();
-    }
-
-    private void verificarReservas() {
-        if (reservaService.listarTodos().isEmpty()) {
-            mensagemLabel.setText("Nenhuma reserva encontrada. Crie uma reserva primeiro.");
-        } else {
-            mensagemLabel.setText("");
-        }
+        // Usar VerificacaoUtil
+        mensagemLabel.setText(VerificacaoUtil.verificarReservas(reservaService));
     }
 
     @FXML

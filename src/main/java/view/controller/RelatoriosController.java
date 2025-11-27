@@ -12,16 +12,15 @@ import main.java.model.pagamentos.MetodoDePagamento;
 import main.java.model.reservas.Reserva;
 import main.java.service.EspacoService;
 import main.java.service.RelatorioService;
+import main.java.util.MensagemUtil;
+import main.java.util.ValidacaoUtil;
 import main.java.view.MainCoworking;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.fxml.FXMLLoader;
+import java.time.LocalDateTime;
 
 import java.util.Arrays;
-import java.util.function.UnaryOperator;
-import javafx.scene.control.TextFormatter;
-
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -66,16 +65,10 @@ public class RelatoriosController {
                 "Reservas realizadas em um período", "Faturamento por tipo de espaço", "Utilização por espaço", "Top espaços mais utilizados"
         ));
         topSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10, 3));
-
-        // Desabilitar edição manual nos DatePickers
         dataInicioPicker.setEditable(false);
         dataFimPicker.setEditable(false);
-
-        // Por padrão, ambas checkboxes marcadas (mostrar todos)
         ativasCheckBox.setSelected(true);
         inativasCheckBox.setSelected(true);
-
-        // Listener para impedir desmarcar ambas
         ativasCheckBox.setOnAction(e -> {
             if (!ativasCheckBox.isSelected() && !inativasCheckBox.isSelected()) {
                 inativasCheckBox.setSelected(true);
@@ -86,7 +79,6 @@ public class RelatoriosController {
                 ativasCheckBox.setSelected(true);
             }
         });
-
         tipoRelatorioComboBox.setOnAction(e -> atualizarCampos());
     }
 
@@ -95,7 +87,6 @@ public class RelatoriosController {
         periodoHBox.setVisible(false);
         statusHBox.setVisible(false);
         topHBox.setVisible(false);
-
         if ("Reservas realizadas em um período".equals(tipo)) {
             descricaoLabel.setText("Exibe reservas em um período específico, com filtros por status de reservas.");
             periodoHBox.setVisible(true);
@@ -119,16 +110,14 @@ public class RelatoriosController {
             String resumo = "";
             List<String> nomesColunas = Arrays.asList("Coluna 1", "Coluna 2", "Coluna 3", "Coluna 4", "Coluna 5");
             if ("Reservas realizadas em um período".equals(tipo)) {
-                if (dataInicioPicker.getValue() == null || dataFimPicker.getValue() == null) {
-                    throw new ValidacaoException(List.of("Datas de início e fim são obrigatórias."));
-                }
+                // Usar ValidacaoUtil para validar período
+                ValidacaoUtil.validarPeriodo(dataInicioPicker.getValue().atStartOfDay(), dataFimPicker.getValue().atTime(23, 59));
                 LocalDateTime inicio = dataInicioPicker.getValue().atStartOfDay();
                 LocalDateTime fim = dataFimPicker.getValue().atTime(23, 59);
                 Boolean ativo = ativasCheckBox.isSelected() && inativasCheckBox.isSelected() ? null : (ativasCheckBox.isSelected() ? true : false);
                 List<Reserva> reservas = relatorioService.reservasPorPeriodo(inicio, fim, ativo);
                 if (reservas.isEmpty()) {
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "Nenhuma reserva encontrada no período selecionado.");
-                    alert.showAndWait();
+                    MensagemUtil.mostrarAlertaErro("Erro", "Nenhuma reserva encontrada no período selecionado.");
                     return;
                 }
                 nomesColunas = Arrays.asList("ID Reserva", "Nome Espaço", "Início", "Fim", "Status", "Disponibilidade");
@@ -143,8 +132,7 @@ public class RelatoriosController {
             } else if ("Faturamento por tipo de espaço".equals(tipo)) {
                 Map<String, Double> faturamento = relatorioService.faturamentoPorTipoEspaco(LocalDateTime.MIN, LocalDateTime.MAX);
                 if (faturamento.isEmpty()) {
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "Nenhum faturamento encontrado.");
-                    alert.showAndWait();
+                    MensagemUtil.mostrarAlertaErro("Erro", "Nenhum faturamento encontrado.");
                     return;
                 }
                 nomesColunas = Arrays.asList("Tipo de Espaço", "Faturamento", "", "", "");
@@ -153,15 +141,13 @@ public class RelatoriosController {
                 }
                 resumo = "Faturamento total geral.";
             } else if ("Utilização por espaço".equals(tipo)) {
-                if (dataInicioPicker.getValue() == null || dataFimPicker.getValue() == null) {
-                    throw new ValidacaoException(List.of("Datas de início e fim são obrigatórias."));
-                }
+                // Usar ValidacaoUtil para validar período
+                ValidacaoUtil.validarPeriodo(dataInicioPicker.getValue().atStartOfDay(), dataFimPicker.getValue().atTime(23, 59));
                 LocalDateTime inicio = dataInicioPicker.getValue().atStartOfDay();
                 LocalDateTime fim = dataFimPicker.getValue().atTime(23, 59);
                 Map<Integer, Double> utilizacao = relatorioService.horasReservadas(inicio, fim);
                 if (utilizacao.isEmpty()) {
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "Nenhuma utilização encontrada no período selecionado.");
-                    alert.showAndWait();
+                    MensagemUtil.mostrarAlertaErro("Erro", "Nenhuma utilização encontrada no período selecionado.");
                     return;
                 }
                 nomesColunas = Arrays.asList("ID Espaço", "Nome Espaço", "Horas Utilizadas", "", "");
@@ -175,8 +161,7 @@ public class RelatoriosController {
                 if (topN <= 0) throw new ValidacaoException(List.of("Top N deve ser maior que 0."));
                 List<Map.Entry<Integer, Long>> top = relatorioService.topEspacosMaisUsados(topN);
                 if (top.isEmpty()) {
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "Nenhum espaço encontrado para o top selecionado.");
-                    alert.showAndWait();
+                    MensagemUtil.mostrarAlertaErro("Erro", "Nenhum espaço encontrado para o top selecionado.");
                     return;
                 }
                 nomesColunas = Arrays.asList("ID Espaço", "Nome Espaço", "Reservas", "", "");
@@ -186,13 +171,11 @@ public class RelatoriosController {
                 }
                 resumo = "Top " + Math.min(topN, top.size()) + " espaços.";
             }
-
-            // Abrir popup
             abrirPopup(dados, resumo, nomesColunas);
         } catch (ValidacaoException e) {
-            errosLabel.setText("Erros encontrados:\n" + String.join("\n", e.getErros()));
+            MensagemUtil.definirErro(errosLabel, "Erros encontrados:\n" + String.join("\n", e.getErros()));
         } catch (Exception e) {
-            errosLabel.setText("Erro inesperado: " + e.getMessage());
+            MensagemUtil.definirErro(errosLabel, "Erro inesperado: " + e.getMessage());
         }
     }
 
@@ -203,14 +186,13 @@ public class RelatoriosController {
             RelatorioPopupController popupController = loader.getController();
             popupController.setRelatorioService(relatorioService);
             popupController.setDados(dados, resumo, nomesColunas);
-
             Stage popupStage = new Stage();
             popupStage.setTitle("Relatório");
             popupStage.setScene(new Scene(root));
             popupStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
             popupStage.showAndWait();
         } catch (Exception e) {
-            errosLabel.setText("Erro ao abrir popup: " + e.getMessage());
+            MensagemUtil.definirErro(errosLabel, "Erro ao abrir popup: " + e.getMessage());
         }
     }
 
