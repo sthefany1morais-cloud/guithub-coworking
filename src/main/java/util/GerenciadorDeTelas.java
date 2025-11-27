@@ -1,4 +1,4 @@
-package main.java.view.util;
+package main.java.util;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
