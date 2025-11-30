@@ -5,6 +5,7 @@ import main.java.model.espacos.Espaco;
 import main.java.model.espacos.SalaDeReuniao;
 import main.java.model.pagamentos.MetodoDePagamento;
 import main.java.model.pagamentos.Pagamento;
+import main.java.util.CalculoReservaUtil;
 
 import javax.persistence.*;
 import java.time.Duration;
@@ -41,7 +42,7 @@ public class Reserva {
         this.fim = fim;
         this.projetor = projetor;
         double horas = calcularHoras(inicio, fim);
-        this.valorCalculado = calcularValor(horas);
+        this.valorCalculado = CalculoReservaUtil.calcularValor(this.espaco, horas, this.projetor);
         this.pagamento = new Pagamento(0, this.valorCalculado, LocalDateTime.now(),metodo);
         this.ativo = true;
     }
@@ -61,15 +62,7 @@ public class Reserva {
             throw new DataInvalidaExeption("A data inicial deve ser anterior à final.");
         }
 
-        long minutos = Duration.between(inicio, fim).toMinutes();
-        return minutos/60.0;
-    }
-
-    private double calcularValor(double horas){
-        if (espaco instanceof SalaDeReuniao){
-            return ((SalaDeReuniao) espaco).calcularCustoReserva(horas, projetor);
-        }
-        return this.espaco.calcularCustoReserva(horas);
+        return CalculoReservaUtil.calcularHoras(inicio, fim);
     }
 
     public int getId() {

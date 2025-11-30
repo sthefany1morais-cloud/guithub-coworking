@@ -3,6 +3,7 @@ package main.java.service;
 import main.java.model.espacos.Espaco;
 import main.java.model.pagamentos.Pagamento;
 import main.java.model.reservas.Reserva;
+import main.java.util.CalculoReservaUtil;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -47,26 +48,22 @@ public class RelatorioService {
                 .collect(Collectors.toList());
     }
 
-    /** Lista todas as reservas, com filtro opcional de status */
     public List<Reserva> reservas(Boolean ativo) {
         return reservasFiltradas(ativo);
     }
 
-    /** Listar reservas dentro de um período */
     public List<Reserva> reservasPorPeriodo(LocalDateTime inicio, LocalDateTime fim, Boolean ativo) {
         return reservasFiltradas(ativo).stream()
                 .filter(r -> reservaNoPeriodo(r, inicio, fim))
                 .collect(Collectors.toList());
     }
 
-    /** Contar reservas por espaço */
     public Map<Integer, Long> totalReservasPorEspaco() {
         return reservasFiltradas(null).stream()
                 .filter(r -> r.getEspaco() != null)
                 .collect(Collectors.groupingBy(r -> r.getEspaco().getId(), Collectors.counting()));
     }
 
-    /** Top N espaços mais utilizados */
     public List<Map.Entry<Integer, Long>> topEspacosMaisUsados(int topN) {
         Map<Integer, Long> totalReservas = totalReservasPorEspaco();
 
@@ -87,18 +84,16 @@ public class RelatorioService {
                 .collect(Collectors.toList());
     }
 
-    /** Horas reservadas por espaço (considerando sobreposição com o período informado) */
     public Map<Integer, Double> horasReservadas(LocalDateTime inicio, LocalDateTime fim) {
         return reservasFiltradas(true).stream()  // Sempre só ativas
                 .filter(r -> r.getEspaco() != null)
                 .filter(r -> reservaNoPeriodo(r, inicio, fim))  // Só totalmente dentro
                 .collect(Collectors.groupingBy(
                         r -> r.getEspaco().getId(),
-                        Collectors.summingDouble(r -> Duration.between(r.getInicio(), r.getFim()).toMinutes() / 60.0)
+                        Collectors.summingDouble(r -> CalculoReservaUtil.calcularHoras(r.getInicio(), r.getFim()))
                 ));
     }
 
-    /** Faturamento por tipo de espaço (SalaDeReuniao, CabineIndividual, Auditorio) */
     public Map<String, Double> faturamentoPorTipoEspaco(LocalDateTime inicio, LocalDateTime fim) {
 
         Map<String, Double> mapa = new HashMap<>();
