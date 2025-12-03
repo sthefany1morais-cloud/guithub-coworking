@@ -1,11 +1,13 @@
 package main.java.util;
 
 import javafx.scene.control.TextField;
+import java.util.function.UnaryOperator;
+import javafx.scene.control.TextFormatter.Change;
 
 public class CampoUtil {
 
     public static void configurarCampoInteiro(TextField field) {
-        java.util.function.UnaryOperator<javafx.scene.control.TextFormatter.Change> intFilter = change -> {
+        UnaryOperator<Change> intFilter = change -> {
             String newText = change.getControlNewText();
             return newText.matches("\\d*") ? change : null;
         };
@@ -13,7 +15,7 @@ public class CampoUtil {
     }
 
     public static void configurarCampoHora(TextField field) {
-        java.util.function.UnaryOperator<javafx.scene.control.TextFormatter.Change> horaFilter = change -> {
+        UnaryOperator<Change> horaFilter = change -> {
             String newText = change.getControlNewText();
             return newText.matches("[\\d:]{0,5}") ? change : null;
         };
