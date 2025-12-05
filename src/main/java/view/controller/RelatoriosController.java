@@ -67,6 +67,8 @@ public class RelatoriosController {
         dataFimPicker.setEditable(false);
         ativasCheckBox.setSelected(true);
         inativasCheckBox.setSelected(true);
+        gerarButton.setDisable(true); // Desabilita o botão inicialmente
+
         ativasCheckBox.setOnAction(e -> {
             if (!ativasCheckBox.isSelected() && !inativasCheckBox.isSelected()) {
                 inativasCheckBox.setSelected(true);
@@ -77,7 +79,19 @@ public class RelatoriosController {
                 ativasCheckBox.setSelected(true);
             }
         });
-        tipoRelatorioComboBox.setOnAction(e -> atualizarCampos());
+
+        // Adiciona listener ao ComboBox para atualizar campos e verificar botão
+        tipoRelatorioComboBox.setOnAction(e -> {
+            atualizarCampos();
+            verificarHabilitarBotao();
+        });
+
+        // Adiciona listeners aos DatePickers
+        dataInicioPicker.valueProperty().addListener((obs, oldVal, newVal) -> verificarHabilitarBotao());
+        dataFimPicker.valueProperty().addListener((obs, oldVal, newVal) -> verificarHabilitarBotao());
+
+        // Adiciona listener ao Spinner
+        topSpinner.valueProperty().addListener((obs, oldVal, newVal) -> verificarHabilitarBotao());
     }
 
     private void atualizarCampos() {
@@ -98,6 +112,26 @@ public class RelatoriosController {
             descricaoLabel.setText("Exibe top espaços mais utilizados (inclui todos os espaços com reservas, mesmo excluídos).");
             topHBox.setVisible(true);
         }
+    }
+
+    private void verificarHabilitarBotao() {
+        String tipo = tipoRelatorioComboBox.getValue();
+        if (tipo == null) {
+            gerarButton.setDisable(true);
+            return;
+        }
+        boolean habilitar = false;
+        if ("Reservas realizadas em um período".equals(tipo) || "Utilização por espaço".equals(tipo)) {
+            // Para esses tipos, as datas são obrigatórias
+            habilitar = dataInicioPicker.getValue() != null && dataFimPicker.getValue() != null;
+        } else if ("Faturamento por tipo de espaço".equals(tipo)) {
+            // Sempre habilitado, pois não requer campos adicionais
+            habilitar = true;
+        } else if ("Top espaços mais utilizados".equals(tipo)) {
+            // Verifica se o valor do spinner é válido (>0)
+            habilitar = topSpinner.getValue() > 0;
+        }
+        gerarButton.setDisable(!habilitar);
     }
 
     @FXML
