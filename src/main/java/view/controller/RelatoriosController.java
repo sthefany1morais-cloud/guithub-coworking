@@ -11,6 +11,7 @@ import main.java.model.reservas.Reserva;
 import main.java.service.EspacoService;
 import main.java.service.RelatorioService;
 import main.java.service.ValidacaoService;
+import main.java.util.CampoUtil;
 import main.java.util.MensagemUtil;
 import main.java.view.MainCoworking;
 import javafx.stage.Stage;
@@ -19,6 +20,7 @@ import javafx.fxml.FXMLLoader;
 import java.time.LocalDateTime;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -67,7 +69,7 @@ public class RelatoriosController {
         dataFimPicker.setEditable(false);
         ativasCheckBox.setSelected(true);
         inativasCheckBox.setSelected(true);
-        gerarButton.setDisable(true); // Desabilita o botão inicialmente
+        gerarButton.setDisable(true);
 
         ativasCheckBox.setOnAction(e -> {
             if (!ativasCheckBox.isSelected() && !inativasCheckBox.isSelected()) {
@@ -80,18 +82,18 @@ public class RelatoriosController {
             }
         });
 
-        // Adiciona listener ao ComboBox para atualizar campos e verificar botão
         tipoRelatorioComboBox.setOnAction(e -> {
             atualizarCampos();
             verificarHabilitarBotao();
         });
 
-        // Adiciona listeners aos DatePickers
-        dataInicioPicker.valueProperty().addListener((obs, oldVal, newVal) -> verificarHabilitarBotao());
-        dataFimPicker.valueProperty().addListener((obs, oldVal, newVal) -> verificarHabilitarBotao());
-
-        // Adiciona listener ao Spinner
-        topSpinner.valueProperty().addListener((obs, oldVal, newVal) -> verificarHabilitarBotao());
+        CampoUtil.habilitarBotaoSeCamposPreenchidos(
+                gerarButton,
+                Arrays.asList(dataInicioPicker, dataFimPicker),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Arrays.asList(topSpinner)
+        );
     }
 
     private void atualizarCampos() {

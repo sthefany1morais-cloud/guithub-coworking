@@ -1,6 +1,5 @@
 package main.java.view.controller;
 
-import javafx.beans.binding.BooleanBinding;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -13,6 +12,7 @@ import main.java.util.ValidacaoUtil;
 import main.java.view.MainCoworking;
 import main.java.service.SistemaService;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class CadastroEspacoController {
@@ -50,16 +50,34 @@ public class CadastroEspacoController {
     @FXML
     private void initialize() {
         tipoComboBox.setItems(FXCollections.observableArrayList("Sala de Reunião", "Cabine Individual", "Auditório"));
-        tipoComboBox.setOnAction(e -> atualizarCamposEspecificos());
-        CampoUtil.configurarCampoInteiro(capacidadeField);  // Usar CampoUtil
+        tipoComboBox.setOnAction(e -> {
+            atualizarCamposEspecificos();
+            verificarHabilitarBotao();
+        });
+        CampoUtil.configurarCampoInteiro(capacidadeField);
         precoField.setText("0,00");
         campoEspecificoField.setText("0,00");
 
-        BooleanBinding camposPreenchidos = nomeField.textProperty().isNotEmpty()
-                .and(capacidadeField.textProperty().isNotEmpty())
-                .and(precoField.textProperty().isNotEmpty())
-                .and(tipoComboBox.valueProperty().isNotNull());
-        salvarButton.disableProperty().bind(camposPreenchidos.not());
+        CampoUtil.habilitarBotaoSeCamposPreenchidos(
+                salvarButton,
+                Arrays.asList(),
+                Arrays.asList(nomeField, capacidadeField, precoField),
+                Arrays.asList(tipoComboBox),
+                Arrays.asList()
+        );
+    }
+
+    private void verificarHabilitarBotao() {
+        String tipo = tipoComboBox.getValue();
+        boolean camposBasicosPreenchidos = nomeField.getText() != null && !nomeField.getText().trim().isEmpty() &&
+                capacidadeField.getText() != null && !capacidadeField.getText().trim().isEmpty() &&
+                precoField.getText() != null && !precoField.getText().trim().isEmpty() &&
+                tipo != null;
+        boolean campoEspecificoPreenchido = true;
+        if ("Sala de Reunião".equals(tipo) || "Auditório".equals(tipo)) {
+            campoEspecificoPreenchido = campoEspecificoField.getText() != null && !campoEspecificoField.getText().trim().isEmpty();
+        }
+        salvarButton.setDisable(!(camposBasicosPreenchidos && campoEspecificoPreenchido));
     }
 
     @FXML

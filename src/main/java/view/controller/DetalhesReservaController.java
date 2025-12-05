@@ -19,6 +19,7 @@ import main.java.view.MainCoworking;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Arrays;
 
 public class DetalhesReservaController {
     @FXML private Label espacoInfoLabel;
@@ -64,30 +65,20 @@ public class DetalhesReservaController {
         dataFimPicker.setEditable(false);
         CampoUtil.configurarCampoHora(horaInicioField);
         CampoUtil.configurarCampoHora(horaFimField);
-        salvarButton.setDisable(true); // Desabilita o botão inicialmente
 
-        // Adiciona listeners para verificar se o botão deve ser habilitado
-        dataInicioPicker.valueProperty().addListener((obs, oldVal, newVal) -> verificarHabilitarBotao());
-        horaInicioField.textProperty().addListener((obs, oldVal, newVal) -> verificarHabilitarBotao());
-        dataFimPicker.valueProperty().addListener((obs, oldVal, newVal) -> verificarHabilitarBotao());
-        horaFimField.textProperty().addListener((obs, oldVal, newVal) -> verificarHabilitarBotao());
-        metodoComboBox.valueProperty().addListener((obs, oldVal, newVal) -> verificarHabilitarBotao());
+        CampoUtil.habilitarBotaoSeCamposPreenchidos(
+                salvarButton,
+                Arrays.asList(dataInicioPicker, dataFimPicker),
+                Arrays.asList(horaInicioField, horaFimField),
+                Arrays.asList(metodoComboBox),
+                Arrays.asList()
+        );
 
         dataInicioPicker.setOnAction(e -> calcularCusto());
         horaInicioField.setOnKeyReleased(e -> calcularCusto());
         dataFimPicker.setOnAction(e -> calcularCusto());
         horaFimField.setOnKeyReleased(e -> calcularCusto());
         projetorCheckBox.setOnAction(e -> calcularCusto());
-    }
-
-    private void verificarHabilitarBotao() {
-        boolean habilitar = dataInicioPicker.getValue() != null &&
-                !horaInicioField.getText().isEmpty() &&
-                dataFimPicker.getValue() != null &&
-                !horaFimField.getText().isEmpty() &&
-                metodoComboBox.getValue() != null &&
-                !metodoComboBox.getValue().isEmpty();
-        salvarButton.setDisable(!habilitar);
     }
 
     private void carregarEspaco() {

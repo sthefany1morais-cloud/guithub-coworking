@@ -1,8 +1,13 @@
 package main.java.util;
 
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
-import java.util.function.UnaryOperator;
 import javafx.scene.control.TextFormatter.Change;
+import java.util.List;
+import java.util.function.UnaryOperator;
 
 public class CampoUtil {
 
@@ -28,5 +33,61 @@ public class CampoUtil {
                 field.setText(FormatadorUtil.formatarDinheiro(newText));
             }
         });
+    }
+
+    public static void habilitarBotaoSeCamposPreenchidos(Button botao, List<DatePicker> datePickers, List<TextField> textFields, List<ComboBox<?>> comboBoxes, List<Spinner<?>> spinners) {
+        Runnable verificacao = () -> {
+            boolean todosPreenchidos = true;
+
+            for (DatePicker dp : datePickers) {
+                if (dp.getValue() == null) {
+                    todosPreenchidos = false;
+                    break;
+                }
+            }
+
+            for (TextField tf : textFields) {
+                if (tf.getText() == null || tf.getText().trim().isEmpty()) {
+                    todosPreenchidos = false;
+                    break;
+                }
+            }
+
+            for (ComboBox<?> cb : comboBoxes) {
+                if (cb.getValue() == null) {
+                    todosPreenchidos = false;
+                    break;
+                }
+            }
+
+            for (Spinner<?> sp : spinners) {
+                if (sp.getValue() == null || (sp.getValue() instanceof Integer && (Integer) sp.getValue() <= 0)) {
+                    todosPreenchidos = false;
+                    break;
+                }
+            }
+
+            botao.setDisable(!todosPreenchidos);
+        };
+
+        // Adiciona listeners a todos os campos
+        for (DatePicker dp : datePickers) {
+            dp.valueProperty().addListener((obs, oldVal, newVal) -> verificacao.run());
+        }
+
+        for (TextField tf : textFields) {
+            tf.textProperty().addListener((obs, oldVal, newVal) -> verificacao.run());
+        }
+
+        for (ComboBox<?> cb : comboBoxes) {
+            cb.valueProperty().addListener((obs, oldVal, newVal) -> verificacao.run());
+        }
+
+        for (Spinner<?> sp : spinners) {
+            sp.valueProperty().addListener((obs, oldVal, newVal) -> verificacao.run());
+        }
+
+        // Executa verificação inicial
+        verificacao.run();
     }
 }
