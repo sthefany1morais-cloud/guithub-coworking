@@ -8,7 +8,6 @@ import main.java.model.espacos.Auditorio;
 import main.java.model.espacos.Espaco;
 import main.java.model.espacos.SalaDeReuniao;
 import main.java.model.pagamentos.MetodoDePagamento;
-import main.java.service.EspacoService;
 import main.java.service.ReservaService;
 import main.java.util.CalculoReservaUtil;
 import main.java.util.CampoUtil;
@@ -37,7 +36,6 @@ public class DetalhesReservaController {
 
     private static Espaco espacoSelecionado;
     private MainCoworking mainApp;
-    private EspacoService espacoService;
     private ReservaService reservaService;
 
     public static void setEspacoSelecionado(Espaco espaco) {
@@ -48,8 +46,7 @@ public class DetalhesReservaController {
         this.mainApp = mainApp;
     }
 
-    public void setServices(EspacoService espacoService, ReservaService reservaService) {
-        this.espacoService = espacoService;
+    public void setReservaService(ReservaService reservaService) {
         this.reservaService = reservaService;
         if (espacoSelecionado != null) {
             carregarEspaco();

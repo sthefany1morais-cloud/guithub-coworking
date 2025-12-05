@@ -50,7 +50,7 @@ public class CancelarReservaController {
         filtroTipoComboBox.setValue("Todos");
         TabelaUtil.configurarColunasReservas(reservasTableView, idColumn, espacoColumn, tipoColumn, inicioColumn, fimColumn, valorColumn);
         buscaField.textProperty().addListener((obs, oldText, newText) -> filtrar());
-        filtroTipoComboBox.setOnAction(e -> filtrar());  // Adicionado listener para o ComboBox
+        filtroTipoComboBox.setOnAction(e -> filtrar());
         cancelarButton.disableProperty().bind(reservasTableView.getSelectionModel().selectedItemProperty().isNull());
     }
 

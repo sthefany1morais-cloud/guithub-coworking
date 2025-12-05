@@ -101,7 +101,7 @@ public class GerenciadorDeTelas {
 
         } else if (controller instanceof DetalhesReservaController c) {
             c.setMainApp(mainApp);
-            c.setServices(espacoService, reservaService);
+            c.setReservaService(reservaService);
 
         } else if (controller instanceof CancelarReservaController c) {
             c.setMainApp(mainApp);
